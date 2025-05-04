@@ -1,0 +1,16 @@
+{
+  "item.guhao.guhao": "§4✡BLOODSEEKER✡",
+  "itemGroup.gu_hao_sama": "§4GuHao_",
+  "effect.guhao.guhao": "§4§kGUHAO",
+  "skill.guhao.sacrifice": "§4Sacrifice",
+  "skill.guhao.sacrifice.tooltip":"It has stored some of the power of the ancient gods......\nEnchanted with Fire has a special Blood Flame effect\nPressing the right button and pressing the left button again will trigger the Recognition Slash\nDodge successfully fires a large blood spike at the enemy\nInfinite perfect block with flexible block equipped\nPress the hotkey to throw ender pearls from the void (no cost)\nPressing the hotkey will cause entities in the 30 blocks around them to burst into blood if they have a bleeding buff, and the explosion damage is proportional to the number of bleeding stacks\nAfter the knife is retracted, it is strengthened, and the next attack will unleash bloody sword energy\nThe special move is usually a strengthened katana advance skill, which can release blood sword energy\nIn the non-sprinting state, you can use Daiaiai, and not sprinting is to strengthen the katana rush skill\nPressing the CTRL key is the skill of the knife\nCharge to 10 and then press the shift to sacrifice yourself to the god to gain some of the god's power.\nSacrifice: At the moment of sacrifice, all physical strength is consumed, and at the same time, the maximum stamina of the monster within 30 blocks of your own 30 blocks is reduced by half, the stamina recovery speed is reduced by half, the armor is 0, the toughness is 0, and at the same time, you gain part of the god's power for a moment.\nGod's Power (Fragments): You get the circle ring under your feet as a reference, when attacking entities, all entities in the circle will receive true damage, how many entities are attacked together and how much HP you recover, and any of your attacks will become triple damage, all of them are magic damage, and blocking additional counter-damage enemies will cause 0.25 times the true damage of the damage, and the appearance of the weapon will change\nBlood Trial: When the effect of the sacrifice lasts, accumulate another 10 layers of skills, press and shift to release, and collect the knife to reduce consumption; Swing a knife forward, the body is agile, causing a large area of attack with a rain of sword light, and finally fire 10 blood thorns and blood sword qi to rush forward with the player\nIt's been a long time......",
+  "key.guhao.ender": "Ender",
+  "key.categories.guhao": "GuHao_",
+  "key.guhao.blood_burst": "Blood Burst",
+  "word.explain": "The ancient power of the Nether has mutated in flesh sacrifices, and the piglings have turned the forbidden into knives with all their might, and see them as the last hope against the end. Three betrayals born of greed, absolute taboos of contact due to arrogance. Thousands of years later, death is already a luxury for them. The age is too old, and the evil gradually retreats, which leads to the instability and weakness of power. I guess there must have been a power to reverse everything at the beginning of its birth.",
+  "word.explain2": "a",
+  "key.guhao.ctrl": "ctrl",
+  "key.guhao.shift": "right key",
+  "effect.guhao.wudi": "wudi",
+  "key.guhao.red_fist": "Red Fist"
+}

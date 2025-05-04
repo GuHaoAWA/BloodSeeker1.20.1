@@ -1,0 +1,6 @@
+{
+  "parent": "guhao:displaysettings/bloodslashingblade2",
+  "textures": {
+    "layer0": "guhao:items/bloodslashingblade2"
+  }
+}

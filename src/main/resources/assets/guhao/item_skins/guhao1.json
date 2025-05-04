@@ -1,0 +1,11 @@
+{
+  "trail": {
+    "color": [175, 16, 16],
+    "begin_pos": [0.0, 0.0, -0.19],
+    "end_pos": [0.0, -0.24, -2.85],
+    "lifetime": 7,
+    "interpolations": 12,
+    "texture_path": "guhao:eyes/eye.png",
+    "particle_type": "guhao:trail_guhao_bloom"
+  }
+}

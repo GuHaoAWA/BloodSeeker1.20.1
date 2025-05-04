@@ -1,0 +1,12 @@
+{
+  "vertex": "red_black_contour",
+  "fragment": "red_black_contour",
+  "attributes": ["Position", "Color", "UV0", "UV2"],
+  "samplers": [
+    { "name": "DiffuseSampler" },
+    { "name": "DepthSampler" }
+  ],
+  "uniforms": [
+    { "name": "ViewFarPlane", "type": "float" }
+  ]
+}

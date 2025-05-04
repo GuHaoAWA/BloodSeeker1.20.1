@@ -1,0 +1,15 @@
+{
+	"definitions": [
+		{
+			"image": "guhao:textures/gui/tooltip_bloodseeker.png",
+			"index": 0,
+			"startColor": "20_#000000_#0F0F0F_#1E1E1E_#2D2D2D_#3C3C3C_#4B4B4B_#5A5A5A_#696969_#787878_#878787_#969696_#A5A5A5_#B4B4B4_#C3C3C3_#D2D2D2+v64-s32_#E1E1E1",
+			"endColor": "20_#0A0A0A_#191919_#282828_#373737_#464646_#555555_#646464_#737373_#828282_#919191_#A0A0A0_#AFAFAF_#BEBEBE_#CDCDCD_#DCDCDC+v64-s32",
+			"bgStartColor": "#0DFF0080",
+			"bgEndColor": "#0DFFFFFF",
+			"selectors": [
+				"guhao:guhao"
+			]
+		}
+	]
+}

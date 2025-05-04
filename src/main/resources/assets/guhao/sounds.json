@@ -1,0 +1,58 @@
+{
+  "laugh": {
+    "sounds": [
+      {
+        "name": "guhao:laugh",
+        "stream": true
+      }
+    ]
+  },
+  "dao1": {
+    "sounds": [
+      {
+        "name": "guhao:dao1",
+        "stream": true
+      }
+    ]
+  },
+  "dao2": {
+    "sounds": [
+      {
+        "name": "guhao:dao2",
+        "stream": true
+      }
+    ]
+  },
+  "dao3": {
+    "sounds": [
+      {
+        "name": "guhao:dao3",
+        "stream": true
+      }
+    ]
+  },
+  "biu": {
+    "sounds": [
+      {
+        "name": "guhao:biu",
+        "stream": false
+      }
+    ]
+  },
+  "blood": {
+    "sounds": [
+      {
+        "name": "guhao:blood",
+        "stream": false
+      }
+    ]
+  },
+  "charge": {
+    "sounds": [
+      {
+        "name": "guhao:charge",
+        "stream": true
+      }
+    ]
+  }
+}

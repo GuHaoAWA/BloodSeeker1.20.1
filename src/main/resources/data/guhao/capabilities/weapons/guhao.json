@@ -1,0 +1,12 @@
+{
+  "attributes":
+  {
+    "common":
+    {
+      "armor_negation":66.6,
+      "impact":2.25,
+      "max_strikes":100
+    }
+  },
+  "type":"guhao:guhao"
+}

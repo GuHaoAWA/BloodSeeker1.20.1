@@ -1,0 +1,6 @@
+{
+  "parent": "guhao:displaysettings/sheath",
+  "textures": {
+    "layer0": "guhao:items/sheath"
+  }
+}
