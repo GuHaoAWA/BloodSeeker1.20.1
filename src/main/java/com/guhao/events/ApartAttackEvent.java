@@ -20,12 +20,7 @@ import static com.github.alexthe666.alexsmobs.effect.AMEffectRegistry.EXSANGUINA
 public class ApartAttackEvent {
     @SubscribeEvent
     public static void AttackEvent(LivingHurtEvent event) {
-        if (event != null && event.getEntity() != null) {
-            if (event.getEntity() instanceof Player) {
-                event.setCanceled(true);
-            }
-            execute(event, event.getEntity(), event.getSource().getEntity());
-        }
+        execute(event, event.getEntity(), event.getSource().getEntity());
     }
 
     public static void execute(LivingEntity entity, Entity sourceentity) {
@@ -36,11 +31,6 @@ public class ApartAttackEvent {
         if (livingEntity == null || sourceentity == null)
             return;
         if (sourceentity instanceof ApartEntity) {
-            if (livingEntity instanceof Player) {
-                if (event != null) {
-                    event.setCanceled(true);
-                }
-            }
             if (!livingEntity.hasEffect(new MobEffectInstance(EXSANGUINATION.get()).getEffect())) livingEntity.addEffect(new MobEffectInstance(new MobEffectInstance(EXSANGUINATION.get()).getEffect(), 200, 1, false, true));
             else livingEntity.addEffect(new MobEffectInstance(new MobEffectInstance(EXSANGUINATION.get()).getEffect(), 200, Objects.requireNonNull(livingEntity.getEffect(EXSANGUINATION.get())).getAmplifier() + 1, false, true));
         }

@@ -29,7 +29,6 @@ public abstract class EnderPearlMixin extends ThrowableItemProjectile {
             for (int i = 0; i < 32; ++i) {
                 this.level().addParticle(ParticleType.BLOOD_FIRE_FLAME.get(), this.getX(), this.getY() + this.random.nextDouble() * 2.0D, this.getZ(), this.random.nextGaussian(), 0.0D, this.random.nextGaussian());
             }
-            entity1.hurt(this.damageSources().fall(), 0.01f);
         }
     }
 }
