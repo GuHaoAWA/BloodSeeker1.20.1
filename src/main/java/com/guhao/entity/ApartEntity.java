@@ -3,6 +3,7 @@ package com.guhao.entity;
 import com.dfdyz.epicacg.registry.Sounds;
 import com.dfdyz.epicacg.utils.MoveCoordFuncUtils;
 import com.guhao.init.Entities;
+import com.p1nero.wukong.entity.FakeWukongEntity;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -25,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import reascer.wom.animation.attacks.BasicAttackNoRotAnimation;
 import reascer.wom.gameasset.WOMAnimations;
 import yesman.epicfight.api.animation.property.AnimationProperty;
+import yesman.epicfight.api.animation.types.AttackAnimation;
 import yesman.epicfight.api.animation.types.StaticAnimation;
 import yesman.epicfight.api.utils.TimePairList;
 import yesman.epicfight.api.utils.math.ValueModifier;
@@ -48,13 +50,13 @@ public class ApartEntity extends TamableAnimal {
 //        setTarget(target);
 //    }
 
-    public ApartEntity(ServerPlayer owner){
+    public ApartEntity(ServerPlayer owner) {
         super(Entities.APART.get(), owner.level());
-        setMaxUpStep(0f);
-        xpReward = 0;
-        setNoAi(false);
-        setItemSlot(EquipmentSlot.MAINHAND, owner.getItemBySlot(EquipmentSlot.MAINHAND).copy());
+        this.setTame(true);
+        this.setOwnerUUID(owner.getUUID());
+        setNoAi(true);
         tame(owner);
+        this.setInvulnerable(true);
     }
 //    public ApartEntity(EntityType<? extends TamableAnimal> p_21803_, Level p_21804_) {
 //        super(p_21803_, p_21804_);
@@ -65,13 +67,10 @@ public class ApartEntity extends TamableAnimal {
 //
 //    }
 
-    public ApartEntity(EntityType<ApartEntity> type, Level world) {
-        super(type, world);
-        setMaxUpStep(0f);
-        xpReward = 0;
-        setNoAi(false);
-    }
 
+    public ApartEntity(EntityType<? extends TamableAnimal> p_21803_, Level p_21804_) {
+        super(p_21803_, p_21804_);
+    }
     @Override
     public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
@@ -95,10 +94,6 @@ public class ApartEntity extends TamableAnimal {
     protected void pushEntities() {
     }
 
-    public static void init() {
-    }
-
-
 //    @Override
 //    public void tame(@NotNull Player player) {
 //        super.tame(player);
@@ -113,13 +108,19 @@ public class ApartEntity extends TamableAnimal {
     @Override
     public void tick() {
         super.tick();
-        if (this.getTarget() != null) this.lookAt(EntityAnchorArgument.Anchor.EYES, new Vec3(this.getTarget().getX(), this.getTarget().getEyeY() - 0.15, this.getTarget().getZ()));
+        if (this.getOwner() == null) {
+            this.kill();
+            this.discard();
+        }
+        if (this.getTarget() != null) {
+            this.lookAt(EntityAnchorArgument.Anchor.EYES, new Vec3(this.getTarget().getX(), this.getTarget().getEyeY() - 0.15, this.getTarget().getZ()));
+        }
 //        if(getOwner() == null) {
 //            this.discard();
 //        }
         if (this.tickCount == 1) {
             StaticAnimation animation = WOMAnimations.HERRSCHER_VERDAMMNIS;
-            if (animation instanceof BasicAttackNoRotAnimation basicAttackNoRotAnimation) {
+            if (animation instanceof AttackAnimation basicAttackNoRotAnimation) {
                 basicAttackNoRotAnimation
                         .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(0.05f))
                         .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, EpicFightParticles.BLADE_RUSH_SKILL)

@@ -5,6 +5,7 @@ import com.guhao.capability.GuHaoCapability;
 import com.guhao.epicfight.GuHaoAnimations;
 import com.guhao.epicfight.GuHaoSkillDataKeys;
 import com.guhao.init.*;
+import com.guhao.network.ParticlePacket;
 import com.mojang.logging.LogUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -38,7 +39,13 @@ import java.util.function.Supplier;
 public class GuhaoMod {
     public static final String MODID = "guhao";
     private static final String PROTOCOL_VERSION = "1";
-
+    public static final String NETWORK_PROTOCOL = "1.0";
+    public static final SimpleChannel NETWORK_CHANNEL = NetworkRegistry.newSimpleChannel(
+            new ResourceLocation(MODID, "main"),
+            () -> NETWORK_PROTOCOL,
+            NETWORK_PROTOCOL::equals,
+            NETWORK_PROTOCOL::equals
+    );
     public static final SimpleChannel PACKET_HANDLER = NetworkRegistry.newSimpleChannel(new ResourceLocation(MODID, MODID), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
     private static int messageID = 0;
     public static final Logger LOGGER = LogUtils.getLogger();
@@ -55,6 +62,14 @@ public class GuhaoMod {
         Items.REGISTRY.register(bus);
         GuHaoSkillDataKeys.DATA_KEYS.register(bus);
 
+        int packetId = 0;
+        NETWORK_CHANNEL.registerMessage(
+                packetId++,
+                ParticlePacket.class,
+                ParticlePacket::encode,
+                ParticlePacket::decode,
+                ParticlePacket::handle
+        );
     }
 
     public static <T> void addNetworkMessage(Class<T> messageType, BiConsumer<T, FriendlyByteBuf> encoder, Function<FriendlyByteBuf, T> decoder, BiConsumer<T, Supplier<NetworkEvent.Context>> messageConsumer) {

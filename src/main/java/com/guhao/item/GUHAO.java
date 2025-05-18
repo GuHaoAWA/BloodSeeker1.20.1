@@ -1,6 +1,7 @@
 package com.guhao.item;
 
 import com.guhao.client.particle.text.ColorPutter;
+import com.guhao.entity.ApartEntity;
 import com.guhao.events.HitEvent;
 import com.guhao.renderers.GUHAORenderer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -10,6 +11,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
@@ -36,14 +38,14 @@ public class GUHAO extends WeaponItem implements GeoItem {
     public GUHAO() {
         super(new Tier() {
 
-            public int getUses() {return 100000;}
+            public int getUses() {return 666666;}
 
             public float getSpeed() {
                 return 9.0f;
             }
 
             public float getAttackDamageBonus() {
-                return 23f;
+                return 22f;
             }
 
             public int getLevel() {
@@ -56,7 +58,7 @@ public class GUHAO extends WeaponItem implements GeoItem {
 
             public @NotNull Ingredient getRepairIngredient() {return Ingredient.of(new ItemStack(Items.ENDER_EYE));}
 
-              }, 3, -2.2f,
+              }, 3, -2.45f,
                 new Properties().fireResistant().rarity(Rarity.EPIC));
     }
 

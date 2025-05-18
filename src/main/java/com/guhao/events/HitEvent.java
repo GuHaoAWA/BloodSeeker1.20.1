@@ -8,7 +8,6 @@ import com.guhao.init.Sounds;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -71,7 +70,7 @@ public class HitEvent {
                         serverLevel.sendParticles(particle, x, y, z, 10, velocity.x, velocity.y, velocity.z, 100.0);
                     }
                     LivingEntityPatch<?> entitypatch = EpicFightCapabilities.getEntityPatch(entity, LivingEntityPatch.class);
-                    if (entitypatch != null) entitypatch.applyStun(StunType.HOLD, 5.0f);
+                    if (entitypatch != null && entity.isAlive()) entitypatch.applyStun(StunType.HOLD, 5.0f);
 
                     entity.hurt(new DamageSource(world.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.MAGIC), player1), random.nextFloat(25.0F, 36.0F));
                 }
@@ -97,7 +96,7 @@ public class HitEvent {
                         GuhaoMod.queueServerWork(14,() -> {
                             entity.hurt(new DamageSource(world.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.MAGIC), player1), 7.5F);
                             LivingEntityPatch<?> entitypatch = EpicFightCapabilities.getEntityPatch(entity, LivingEntityPatch.class);
-                            if (entitypatch != null) entitypatch.applyStun(StunType.HOLD, 3.0f);
+                            if (entitypatch != null && entity.isAlive()) entitypatch.applyStun(StunType.HOLD, 3.0f);
                             if (world instanceof ServerLevel _level) {
                                 Random r = new Random();
                                 _level.sendParticles(ParticleType.ONE_JC_BLOOD_JUDGEMENT.get(), x, y, z, 1, 0.15, 0, 0.15, 0);
@@ -105,7 +104,7 @@ public class HitEvent {
                             }
 
                                 GuhaoMod.queueServerWork(10, () -> {
-                                    if (entitypatch != null) entitypatch.applyStun(StunType.HOLD, 3.0f);
+                                    if (entitypatch != null && entity.isAlive()) entitypatch.applyStun(StunType.HOLD, 3.0f);
                                     if (world instanceof ServerLevel _level) {
                                         Random r = new Random();
                                         _level.sendParticles(ParticleType.ONE_JC_BLOOD_JUDGEMENT.get(), x, y, z, 1, 0.15, 0, 0.15, 0);

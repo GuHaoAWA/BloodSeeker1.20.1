@@ -177,6 +177,7 @@ dependencies {
     implementation fg.deobf("libs:dummmmmmy-1.20-2.0.6:1.1")
     implementation fg.deobf("libs:ldlib-forge-1.20.1-1.0.39:1.1")
     implementation fg.deobf("libs:photon-forge-1.20.1-1.1.7:1.1")
+    implementation fg.deobf("libs:EpicFight-Resurrection-forge1.20.1-0.1.28:1.1")
 //    implementation fg.deobf("libs:gore_edition-0.5alpha-3-forge-1.20.1:1.1")
 
     implementation fg.deobf("software.bernie.geckolib:geckolib-forge-1.20.1:4.7.1.2")

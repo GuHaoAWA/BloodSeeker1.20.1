@@ -1,11 +1,13 @@
 package com.guhao.client.particle.par;
 
 
-import com.dfdyz.epicacg.client.particle.BloomTrailParticle;
 import com.dfdyz.epicacg.client.render.EpicACGRenderType;
 import com.dfdyz.epicacg.client.render.pipeline.PostEffectPipelines;
 import com.google.common.collect.Lists;
+import com.guhao.client.ParticlePostProcessor;
 import com.guhao.init.ParticleType;
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
@@ -23,6 +25,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
+import org.lwjgl.opengl.GL11;
 import yesman.epicfight.api.animation.AnimationManager;
 import yesman.epicfight.api.animation.AnimationPlayer;
 import yesman.epicfight.api.animation.Joint;
@@ -36,13 +39,13 @@ import yesman.epicfight.api.client.model.ItemSkins;
 import yesman.epicfight.api.utils.math.CubicBezierCurve;
 import yesman.epicfight.api.utils.math.OpenMatrix4f;
 import yesman.epicfight.api.utils.math.Vec3f;
-import yesman.epicfight.main.EpicFightMod;
 import yesman.epicfight.particle.EpicFightParticles;
 import yesman.epicfight.world.capabilities.EpicFightCapabilities;
 import yesman.epicfight.world.capabilities.entitypatch.LivingEntityPatch;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 @OnlyIn(Dist.CLIENT)
 public class BloomTrailParticleGuhao extends TextureSheetParticle {
@@ -54,7 +57,11 @@ public class BloomTrailParticleGuhao extends TextureSheetParticle {
     private final List<TrailEdge> visibleTrailEdges;
     private boolean animationEnd;
     private float startEdgeCorrection = 0.0F;
-
+    private float motionFactor = 0f;
+    private static final float DISTORTION_INTENSITY = 0.25f; // 基础强度提升
+    private static final float COLOR_PULSE_SPEED = 0.8f;     // 颜色变化加速
+    private static final float MAX_DISTORTION = 0.45f;       // 最大扭曲值
+    private static final float MOTION_FACTOR_MULTIPLIER = 1.5f; // 运动影响系数
     protected BloomTrailParticleGuhao(ClientLevel level, LivingEntityPatch<?> entitypatch, Joint joint, StaticAnimation animation, TrailInfo trailInfo, SpriteSet spriteSet) {
         super(level, 0, 0, 0);
 
@@ -133,17 +140,6 @@ public class BloomTrailParticleGuhao extends TextureSheetParticle {
                 this.lifetime = this.trailInfo.trailLifetime;
             }
         }
-
-        /*
-        if (this.trailInfo.endTime < animPlayer.getElapsedTime()) {
-            return;
-        }*/
-
-        //double xd = Math.pow(this.entitypatch.getOriginal().getX() - this.entitypatch.getOriginal().xo, 2);
-        //double yd = Math.pow(this.entitypatch.getOriginal().getY() - this.entitypatch.getOriginal().yo, 2);
-        //double zd = Math.pow(this.entitypatch.getOriginal().getZ() - this.entitypatch.getOriginal().zo, 2);
-        //float move = (float)Math.sqrt(xd + yd + zd) * 2.0F;
-        //this.setSize(this.bbWidth + move, this.bbHeight + move);
 
         boolean isTrailInvisible = animPlayer.getAnimation() instanceof LinkAnimation || animPlayer.getElapsedTime() <= this.trailInfo.startTime;
         boolean isFirstTrail = this.visibleTrailEdges.size() == 0;
@@ -252,21 +248,34 @@ public class BloomTrailParticleGuhao extends TextureSheetParticle {
 
         }
         this.makeTrailEdges(finalStartPositions, finalEndPositions, visibleTrail ? this.visibleTrailEdges : this.invisibleTrailEdges);
+        // 新增：计算运动因子
+        Vec3 deltaMovement = entitypatch.getOriginal().getDeltaMovement();
+        this.motionFactor = Mth.lerp(0.15f, this.motionFactor,
+                (float)deltaMovement.length() * 0.7f);
     }
-
     @Override
     public void render(@NotNull VertexConsumer vertexConsumer, @NotNull Camera camera, float partialTick) {
+        RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
+        RenderSystem.stencilFunc(GL11.GL_ALWAYS, 1, 0xFF);
+        RenderSystem.stencilMask(0xFF);
         if (this.visibleTrailEdges.isEmpty()) {
             return;
         }
 
         if(!PostEffectPipelines.isActive() || !this.entitypatch.getOriginal().isAlive()) return;
-        //EpicACGRenderType.getBloomRenderTypeByTexture(trailInfo.texturePath).callPipeline();
+        EpicACGRenderType.getBloomRenderTypeByTexture(trailInfo.texturePath).callPipeline();
+// 新增：动态参数计算
+        float time = (level.getGameTime() + partialTick) * 1.2f;
+        float dynamicIntensity = DISTORTION_INTENSITY * (0.5f + motionFactor * 1.2f); // 增强速度影响
+        dynamicIntensity = Mth.clamp(dynamicIntensity, 0.05f, MAX_DISTORTION);
+        float colorPulse = Mth.sin(time * COLOR_PULSE_SPEED) * 0.2f + 0.8f;
 
         PoseStack poseStack = new PoseStack();
         int light = 15728880;
         this.setupPoseStack(poseStack, camera, partialTick);
         Matrix4f matrix4f = poseStack.last().pose();
+        // 新增：深度偏移防止Z-fighting
+        poseStack.translate(0, 0, 0.02f);
         int edges = this.visibleTrailEdges.size() - 1;
         boolean startFade = this.visibleTrailEdges.get(0).lifetime == 1;
         boolean endFade = this.visibleTrailEdges.get(edges).lifetime == this.trailInfo.trailLifetime;
@@ -283,36 +292,110 @@ public class BloomTrailParticleGuhao extends TextureSheetParticle {
         float from = -partialStartEdge;
         float to = -partialStartEdge + interval;
 
+        // 修改后的顶点处理循环
         for (int i = (int)(startEdge); i < (int)endEdge + 1; i++) {
+
             TrailEdge e1 = this.visibleTrailEdges.get(i);
             TrailEdge e2 = this.visibleTrailEdges.get(i + 1);
-            Vector4f pos1 = new Vector4f((float)e1.start.x, (float)e1.start.y, (float)e1.start.z, 1.0F);
-            Vector4f pos2 = new Vector4f((float)e1.end.x, (float)e1.end.y, (float)e1.end.z, 1.0F);
-            Vector4f pos3 = new Vector4f((float)e2.end.x, (float)e2.end.y, (float)e2.end.z, 1.0F);
-            Vector4f pos4 = new Vector4f((float)e2.start.x, (float)e2.start.y, (float)e2.start.z, 1.0F);
 
-            pos1.mul(matrix4f);
-            pos2.mul(matrix4f);
-            pos3.mul(matrix4f);
-            pos4.mul(matrix4f);
+            // 新增：动态顶点扭曲方法
+// 修改applyDistortion方法中的计算逻辑
+            float finalDynamicIntensity = dynamicIntensity;
+            Function<Vec3, Vector4f> applyDistortion = pos -> {
+                // 增加Y轴偏移和多层波形叠加
+                float timeFactor = time * 1.5f;
+                float offsetX = Mth.sin((float) (timeFactor + pos.x * 0.5f)) * finalDynamicIntensity
+                        + Mth.cos((float) (timeFactor * 0.8f + pos.z * 0.3f)) * finalDynamicIntensity * 0.6f;
 
-            //float alphaFrom = Mth.clamp(from, 0.0F, 1.0F);
-            //float alphaTo = Mth.clamp(to, 0.0F, 1.0F);
+                float offsetY = Mth.sin((float) (timeFactor * 1.2f + pos.x * 0.2f)) * finalDynamicIntensity * 0.4f;
 
-            float alphaFrom = Mth.clamp(Mth.clamp(from, 0.0F, 1.0F) * this.alpha * fading, 0f, 1f);
-            float alphaTo = Mth.clamp(Mth.clamp(to, 0.0F, 1.0F) * this.alpha * fading, 0f, 1f);
+                float offsetZ = Mth.cos((float) (timeFactor * 0.7f + pos.z * 0.4f)) * finalDynamicIntensity
+                        - Mth.sin(timeFactor * 0.9f) * finalDynamicIntensity * 0.3f;
 
-            alphaFrom = Mth.sqrt(alphaFrom);
-            alphaTo = Mth.sqrt(alphaTo);
+                return new Vector4f(
+                        (float)pos.x + offsetX,
+                        (float)pos.y + offsetY, // 添加Y轴偏移
+                        (float)pos.z + offsetZ,
+                        1.0F
+                ).mul(matrix4f);
+            };
 
-            vertexConsumer.vertex(pos1.x(), pos1.y(), pos1.z()).color(this.rCol, this.gCol, this.bCol, alphaFrom).uv(from, 1.0F).uv2(light).endVertex();
-            vertexConsumer.vertex(pos2.x(), pos2.y(), pos2.z()).color(this.rCol, this.gCol, this.bCol, alphaFrom).uv(from, 0.0F).uv2(light).endVertex();
-            vertexConsumer.vertex(pos3.x(), pos3.y(), pos3.z()).color(this.rCol, this.gCol, this.bCol, alphaTo).uv(to, 0.0F).uv2(light).endVertex();
-            vertexConsumer.vertex(pos4.x(), pos4.y(), pos4.z()).color(this.rCol, this.gCol, this.bCol, alphaTo).uv(to, 1.0F).uv2(light).endVertex();
+            Vector4f pos1 = applyDistortion.apply(e1.start);
+            Vector4f pos2 = applyDistortion.apply(e1.end);
+            Vector4f pos3 = applyDistortion.apply(e2.end);
+            Vector4f pos4 = applyDistortion.apply(e2.start);
+
+            // 动态颜色和透明度
+            float edgeFactor = 1.0f - Mth.abs((float)i/edges - 0.5f) * 2.0f;
+
+// 修改颜色计算部分
+            float colorVariation = Mth.sin(time * 0.4f) * 0.3f + 0.7f;
+            float edgeGlow = (float) (Math.pow(edgeFactor, 3) * 0.4f); // 立方增强边缘效果
+
+            float r = Mth.clamp(this.rCol * colorPulse * 1.2f + edgeGlow, 0, 1);
+            float g = Mth.clamp(this.gCol * colorPulse * 1.1f + edgeGlow * 0.8f, 0, 1);
+            float b = Mth.clamp(this.bCol * colorPulse + edgeGlow * 0.6f, 0, 1);
+            float alphaMod = Mth.sin(time * 0.5f) * 0.1f + 0.9f;
+            float alphaFrom = Mth.sqrt(Mth.clamp(from, 0, 1)) * alphaMod;
+            float alphaTo = Mth.sqrt(Mth.clamp(to, 0, 1)) * alphaMod;
+            Vector4f velocityOffset = new Vector4f(
+                    (float)(entitypatch.getOriginal().getDeltaMovement().x * 0.2f),
+                    (float)(entitypatch.getOriginal().getDeltaMovement().y * 0.2f),
+                    (float)(entitypatch.getOriginal().getDeltaMovement().z * 0.2f),
+                    0
+            );
+
+            pos1.add(velocityOffset.mul(0.8f - i/(float)edges));
+            pos2.add(velocityOffset.mul(0.8f - i/(float)edges));
+            pos3.add(velocityOffset.mul(1.2f - i/(float)edges));
+            pos4.add(velocityOffset.mul(1.2f - i/(float)edges));
+            // 边缘光晕增强
+            if (i == (int)startEdge || i == (int)endEdge) {
+                r = Math.min(r * 1.2f, 1.0f);
+                alphaFrom *= 1.3f;
+                alphaTo *= 1.3f;
+            }
+
+            // 顶点数据写入
+            vertexConsumer.vertex(pos1.x(), pos1.y(), pos1.z())
+                    .color(r, g, b, alphaFrom)
+                    .uv(from, 1.0F).uv2(light).endVertex();
+            vertexConsumer.vertex(pos2.x(), pos2.y(), pos2.z())
+                    .color(r, g, b, alphaFrom)
+                    .uv(from, 0.0F).uv2(light).endVertex();
+            vertexConsumer.vertex(pos3.x(), pos3.y(), pos3.z())
+                    .color(r, g, b, alphaTo)
+                    .uv(to, 0.0F).uv2(light).endVertex();
+            vertexConsumer.vertex(pos4.x(), pos4.y(), pos4.z())
+                    .color(r, g, b, alphaTo)
+                    .uv(to, 1.0F).uv2(light).endVertex();
 
             from += interval;
             to += interval;
         }
+        ParticlePostProcessor.addParticlePosition(
+                (float) this.x,
+                (float) (this.y + 0.5), // Y偏移
+                (float) this.z,
+                this.motionFactor // 强度因子
+        );
+
+        RenderSystem.stencilMask(0x00);
+    }
+
+    protected void setupPoseStack(PoseStack poseStack, Camera camera, float partialTicks) {
+        Vec3 vec3 = camera.getPosition();
+        float x = (float)-vec3.x();
+        float y = (float)-vec3.y();
+        float z = (float)-vec3.z();
+
+        // 添加相机抖动效果
+        float cameraShake = motionFactor * 0.003f;
+        poseStack.translate(
+                x + (level.random.nextFloat() - 0.5f) * cameraShake,
+                y + (level.random.nextFloat() - 0.5f) * cameraShake,
+                z
+        );
     }
 
     @Override
@@ -325,13 +408,7 @@ public class BloomTrailParticleGuhao extends TextureSheetParticle {
         return EpicACGRenderType.getBloomRenderTypeByTexture(trailInfo.texturePath);
     }
 
-    protected void setupPoseStack(PoseStack poseStack, Camera camera, float partialTicks) {
-        Vec3 vec3 = camera.getPosition();
-        float x = (float)-vec3.x();
-        float y = (float)-vec3.y();
-        float z = (float)-vec3.z();
-        poseStack.translate(x, y, z);
-    }
+
 
     private void makeTrailEdges(List<Vec3> startPositions, List<Vec3> endPositions, List<TrailEdge> dest) {
         for (int i = 0; i < startPositions.size(); i++) {

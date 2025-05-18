@@ -2,9 +2,11 @@ package com.guhao.entity;
 
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import reascer.wom.world.entity.mob.LupusRex;
 import yesman.epicfight.api.animation.Animator;
 import yesman.epicfight.api.animation.LivingMotions;
 import yesman.epicfight.api.animation.types.StaticAnimation;
+import yesman.epicfight.api.utils.AttackResult;
 import yesman.epicfight.world.capabilities.EpicFightCapabilities;
 import yesman.epicfight.world.capabilities.entitypatch.Faction;
 import yesman.epicfight.world.capabilities.entitypatch.HumanoidMobPatch;
@@ -14,7 +16,7 @@ import yesman.epicfight.world.damagesource.EpicFightDamageSource;
 public class ApartEntityPatch extends HumanoidMobPatch<ApartEntity> {
 
     public ApartEntityPatch() {
-        super(Faction.VILLAGER);
+        super(Faction.UNDEAD);
 
     }
 

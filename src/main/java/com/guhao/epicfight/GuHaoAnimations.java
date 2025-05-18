@@ -9,7 +9,6 @@ import com.dfdyz.epicacg.utils.MoveCoordFuncUtils;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
 import com.guhao.GuHaoColliderPreset;
-import com.guhao.epicfight.skills.GuHaoPassive;
 import com.guhao.epicfight.skills.GuHaoSkills;
 import com.guhao.init.Effect;
 import com.guhao.init.ParticleType;
@@ -17,12 +16,10 @@ import com.guhao.ranksystem.ServerEventExtra;
 import com.guhao.stars.regirster.Sounds;
 import com.guhao.utils.BattleUtils;
 import com.p1nero.wukong.epicfight.animation.custom.SpecialActionAnimation;
-import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -62,7 +59,6 @@ import yesman.epicfight.world.entity.eventlistener.PlayerEventListener;
 
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import java.util.UUID;
 
 import static com.guhao.GuHaoColliderPreset.BIG_ATTACK;
@@ -105,6 +101,7 @@ public class GuHaoAnimations {
     public static StaticAnimation JIANQIE;
     public static StaticAnimation SETTLEMENT;
     public static StaticAnimation HERRSCHER_AUTO_3;
+    public static StaticAnimation GUHAO_UCHIGATANA_SHEATHING_AUTO_EX;
 
     private static void register() {
         HumanoidArmature biped = Armatures.BIPED;
@@ -186,6 +183,14 @@ public class GuHaoAnimations {
                                 AnimationEvent.TimeStampedEvent.create(0.8F, (ep, anim, objs) -> BattleUtils.Guhao_Battle_utils.blood_blade(ep), AnimationEvent.Side.SERVER)
                         );
         GUHAO_UCHIGATANA_SHEATHING_AUTO = new BasicAttackAnimation(0.05F, 0.0F, 0.06F, 0.65F, null, biped.toolR, "biped/uchigatana_sheath_auto", biped)
+                .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(1.25F))
+                .addProperty(AnimationProperty.AttackPhaseProperty.ARMOR_NEGATION_MODIFIER, ValueModifier.adder(30.0F))
+                .addProperty(AnimationProperty.AttackPhaseProperty.MAX_STRIKES_MODIFIER, ValueModifier.adder(2.0F))
+                .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND, EpicFightSounds.WHOOSH_SHARP.get())
+                .addProperty(AnimationProperty.StaticAnimationProperty.TIME_STAMPED_EVENTS, new AnimationEvent.TimeStampedEvent[]{
+                        AnimationEvent.TimeStampedEvent.create(0.055F, (ep, anim, objs) -> BattleUtils.Guhao_Battle_utils.blood_blade(ep), AnimationEvent.Side.SERVER),
+                });
+        GUHAO_UCHIGATANA_SHEATHING_AUTO_EX = new BasicAttackAnimation(0.05F, 0.0F, 0.06F, 0.65F, null, biped.toolR, "biped/guhao_uchigatana_sheath_auto_ex", biped)
                 .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(1.25F))
                 .addProperty(AnimationProperty.AttackPhaseProperty.ARMOR_NEGATION_MODIFIER, ValueModifier.adder(30.0F))
                 .addProperty(AnimationProperty.AttackPhaseProperty.MAX_STRIKES_MODIFIER, ValueModifier.adder(2.0F))
@@ -436,7 +441,7 @@ public class GuHaoAnimations {
                 .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(1.2F))
                 .addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.HOLD)
                 .addProperty(AnimationProperty.AttackAnimationProperty.ATTACK_SPEED_FACTOR, 0.0F)
-                .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, (a1,b1,c1,d1,e1) -> 0.667F)
+                .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, (a1,b1,c1,d1,e1) -> 0.7F)
                 .addEvents(
                         AnimationEvent.TimeStampedEvent.create(0.15F, Animations.ReusableSources.PLAY_SOUND, AnimationEvent.Side.CLIENT).params(EpicFightSounds.SWORD_IN.get()),
                         AnimationEvent.TimeStampedEvent.create(0.1501F, (ep, anim, objs) -> {

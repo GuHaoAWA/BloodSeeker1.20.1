@@ -7,10 +7,14 @@ import com.guhao.epicfight.GuHaoAnimations;
 import com.guhao.init.Effect;
 import com.guhao.init.Key;
 import com.guhao.init.ParticleType;
+import com.guhao.network.ParticlePacket;
 import com.guhao.stars.regirster.Sounds;
 import com.guhao.utils.ArrayUtils;
 import com.nameless.falchion.gameasset.FalchionAnimations;
 import io.netty.buffer.Unpooled;
+import net.corruptdog.cdm.gameasset.CorruptAnimations;
+import net.mehvahdjukaar.dummmmmmy.network.NetworkHandler;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.registries.Registries;
@@ -25,6 +29,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.network.PacketDistributor;
 import reascer.wom.gameasset.WOMAnimations;
 import yesman.epicfight.api.animation.StaticAnimationProvider;
 import yesman.epicfight.api.animation.property.AnimationEvent;
@@ -47,16 +52,15 @@ import yesman.epicfight.world.damagesource.StunType;
 import yesman.epicfight.world.effect.EpicFightMobEffects;
 import yesman.epicfight.world.entity.eventlistener.PlayerEventListener;
 
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.guhao.epicfight.GuHaoSkillDataKeys.IS_CTRL_DOWN;
 import static com.guhao.epicfight.GuHaoSkillDataKeys.SHEATH;
 
 public class SacrificeSkill extends WeaponInnateSkill {
     private final StaticAnimationProvider[] animations = new StaticAnimationProvider[3];
-    private final Map<StaticAnimation, AttackAnimation> comboAnimation = Maps.newHashMap();
+    private final Map<StaticAnimation, AttackAnimation> comboAnimation = new ConcurrentHashMap<>();
     private static final UUID EVENT_UUID = UUID.fromString("d706b5bc-b98b-cc49-b83e-16ae590db349");
 
     public SacrificeSkill(Builder<? extends Skill> builder) {
@@ -84,21 +88,27 @@ public class SacrificeSkill extends WeaponInnateSkill {
     @Override
     public WeaponInnateSkill registerPropertiesToAnimation() {
         this.comboAnimation.clear();
+
+        this.comboAnimation.put(GuHaoAnimations.GUHAO_UCHIGATANA_SHEATHING_AUTO, (AttackAnimation) GuHaoAnimations.GUHAO_UCHIGATANA_SHEATHING_AUTO_EX.newTimePair(0.0F, 0.056F).addStateRemoveOld(EntityState.CAN_BASIC_ATTACK, false));
+        this.comboAnimation.put(GuHaoAnimations.GUHAO_UCHIGATANA_SHEATHING_DASH, (AttackAnimation) GuHaoAnimations.GUHAO_UCHIGATANA_SHEATHING_AUTO_EX.newTimePair(0.0F, 0.056F).addStateRemoveOld(EntityState.CAN_BASIC_ATTACK, false));
+        this.comboAnimation.put(GuHaoAnimations.GUHAO_UCHIGATANA_SHEATH_AIR_SLASH, (AttackAnimation) GuHaoAnimations.GUHAO_UCHIGATANA_SHEATHING_AUTO_EX.newTimePair(0.0F, 0.056F).addStateRemoveOld(EntityState.CAN_BASIC_ATTACK, false));
+        this.comboAnimation.put(GuHaoAnimations.GUHAO_UCHIGATANA_SHEATHING_AUTO_EX, (AttackAnimation) GuHaoAnimations.GUHAO_UCHIGATANA_SHEATHING_AUTO_EX.newTimePair(0.0F, 0.056F).addStateRemoveOld(EntityState.CAN_BASIC_ATTACK, false));
+
         this.comboAnimation.put(WOMAnimations.KATANA_AUTO_1, (AttackAnimation) Animations.RUSHING_TEMPO2.newTimePair(0.0F, 0.25F).addStateRemoveOld(EntityState.CAN_BASIC_ATTACK, false));
-        this.comboAnimation.put(WOMAnimations.KATANA_AUTO_2, (AttackAnimation) Animations.RUSHING_TEMPO2.newTimePair(0.0F, 0.25F).addStateRemoveOld(EntityState.CAN_BASIC_ATTACK, false));
+        this.comboAnimation.put(WOMAnimations.KATANA_AUTO_2, (AttackAnimation) Animations.RUSHING_TEMPO3.newTimePair(0.0F, 0.25F).addStateRemoveOld(EntityState.CAN_BASIC_ATTACK, false));
         this.comboAnimation.put(WOMAnimations.KATANA_AUTO_3, (AttackAnimation) GuHaoAnimations.EF_UCHIGATANA_SHEATHING_DASH.newTimePair(0.0F, 0.25F).addStateRemoveOld(EntityState.CAN_BASIC_ATTACK, false));
-        this.comboAnimation.put(Animations.TACHI_AUTO2, (AttackAnimation) Animations.RUSHING_TEMPO3.newTimePair(0.0F, 0.25F).addStateRemoveOld(EntityState.CAN_BASIC_ATTACK, false));
+        this.comboAnimation.put(CorruptAnimations.SWORD_ONEHAND_AUTO3, (AttackAnimation) Animations.RUSHING_TEMPO2.newTimePair(0.0F, 0.25F).addStateRemoveOld(EntityState.CAN_BASIC_ATTACK, false));
         this.comboAnimation.put(GuHaoAnimations.HERRSCHER_AUTO_3, (AttackAnimation) Animations.RUSHING_TEMPO1.newTimePair(0.0F, 0.25F).addStateRemoveOld(EntityState.CAN_BASIC_ATTACK, false));
 
-        this.comboAnimation.put(GuHaoAnimations.GUHAO_DASH_2, (AttackAnimation) GuHaoAnimations.DENG_LONG.newTimePair(0.0F, 0.25F).addStateRemoveOld(EntityState.CAN_BASIC_ATTACK, false));
-        this.comboAnimation.put(GuHaoAnimations.SETTLEMENT, (AttackAnimation) GuHaoAnimations.DENG_LONG.newTimePair(0.0F, 0.25F).addStateRemoveOld(EntityState.CAN_BASIC_ATTACK, false));
+        this.comboAnimation.put(GuHaoAnimations.GUHAO_DASH_2, (AttackAnimation) GuHaoAnimations.DENG_LONG.newTimePair(0.0F, 2.833F).addStateRemoveOld(EntityState.CAN_BASIC_ATTACK, false));
+        this.comboAnimation.put(GuHaoAnimations.SETTLEMENT, (AttackAnimation) GuHaoAnimations.DENG_LONG.newTimePair(0.0F, 2.833F).addStateRemoveOld(EntityState.CAN_BASIC_ATTACK, false));
 
-        this.comboAnimation.put(Animations.RUSHING_TEMPO2, (AttackAnimation) GuHaoAnimations.GUHAO_BIU.newTimePair(0.0F, 0.25F).addStateRemoveOld(EntityState.CAN_BASIC_ATTACK, false));
-        this.comboAnimation.put(GuHaoAnimations.EF_UCHIGATANA_SHEATHING_DASH, (AttackAnimation) GuHaoAnimations.GUHAO_BIU.newTimePair(0.0F, 0.25F).addStateRemoveOld(EntityState.CAN_BASIC_ATTACK, false));
-        this.comboAnimation.put(Animations.RUSHING_TEMPO3, (AttackAnimation) GuHaoAnimations.GUHAO_BIU.newTimePair(0.0F, 0.25F).addStateRemoveOld(EntityState.CAN_BASIC_ATTACK, false));
-        this.comboAnimation.put(Animations.RUSHING_TEMPO1, (AttackAnimation) GuHaoAnimations.GUHAO_BIU.newTimePair(0.0F, 0.25F).addStateRemoveOld(EntityState.CAN_BASIC_ATTACK, false));
+        this.comboAnimation.put(Animations.RUSHING_TEMPO2, (AttackAnimation) GuHaoAnimations.GUHAO_BIU.newTimePair(0.0F, 0.385F).addStateRemoveOld(EntityState.CAN_BASIC_ATTACK, false));
+        this.comboAnimation.put(GuHaoAnimations.EF_UCHIGATANA_SHEATHING_DASH, (AttackAnimation) GuHaoAnimations.GUHAO_BIU.newTimePair(0.0F, 0.385F).addStateRemoveOld(EntityState.CAN_BASIC_ATTACK, false));
+        this.comboAnimation.put(Animations.RUSHING_TEMPO3, (AttackAnimation) GuHaoAnimations.GUHAO_BIU.newTimePair(0.0F, 0.385F).addStateRemoveOld(EntityState.CAN_BASIC_ATTACK, false));
+        this.comboAnimation.put(Animations.RUSHING_TEMPO1, (AttackAnimation) GuHaoAnimations.GUHAO_BIU.newTimePair(0.0F, 0.385F).addStateRemoveOld(EntityState.CAN_BASIC_ATTACK, false));
 
-        this.comboAnimation.put(GuHaoAnimations.GUHAO_BIU, (AttackAnimation) GuHaoAnimations.GUHAO_UCHIGATANA_SCRAP.newTimePair(0.0F, 0.25F).addStateRemoveOld(EntityState.CAN_BASIC_ATTACK, false));
+        this.comboAnimation.put(GuHaoAnimations.GUHAO_BIU, (AttackAnimation) GuHaoAnimations.GUHAO_UCHIGATANA_SCRAP.newTimePair(0.0F, 0.155F).addStateRemoveOld(EntityState.CAN_BASIC_ATTACK, false));
         this.comboAnimation.values().forEach((animation) -> animation.phases[0].addProperties((this.properties.get(0)).entrySet()));
         return this;
     }
@@ -161,13 +171,21 @@ public class SacrificeSkill extends WeaponInnateSkill {
         DynamicAnimation animation = executer.getAnimator().getPlayerFor(null).getAnimation();
         while (true) {
 //            executer.playSound(Sounds.CHUA.get(),0.75f,1.0f,1.0f);
-            if (executer.getTarget() != null && ((executer.getSkill(SkillSlots.WEAPON_INNATE).getStack() >= 13 && ((executer.getTarget().getHealth() <= executer.getTarget().getMaxHealth() * 0.1f) || (executer.getTarget().getHealth() <= 10.0f))) && !isOnGround)) {
-                executer.playAnimationSynchronized(WOMAnimations.AGONY_CLAWSTRIKE.addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, (a,b,c,d,e) -> 0.75F)
+            if (executer.getTarget() != null && ((executer.getSkill(SkillSlots.WEAPON_INNATE).getStack() >= 12 && ((executer.getTarget().getHealth() <= executer.getTarget().getMaxHealth() * 0.1f) || (executer.getTarget().getHealth() <= 10.0f))) && !isOnGround)) {
+                executer.playSound(Sounds.SEKIRO.get(), 1f, 1f, 1f);
+                executer.playAnimationSynchronized(WOMAnimations.AGONY_CLAWSTRIKE.addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, (a,b,c,d,e) -> 0.8F)
                         .addEvents(AnimationProperty.StaticAnimationProperty.ON_BEGIN_EVENTS, AnimationEvent.create((entitypatch, animation2, params) -> {
                     LivingEntity target = entitypatch.getTarget();
-                    target.level().addParticle(ParticleType.TWO_EYE.get(), target.getX(),target.getY(),target.getZ(),target.getX(),target.getEyeY(),target.getZ());
+                            GuhaoMod.NETWORK_CHANNEL.send(
+                                    PacketDistributor.TRACKING_ENTITY.with(() -> target),
+                                    new ParticlePacket(
+                                            ParticleType.TWO_EYE.get(),
+                                            target.getX(), target.getEyeY(), target.getZ(),
+                                            target.getX(), target.getEyeY(), target.getZ()
+                                    )
+                            );
                     Vec3 viewVec = executer.getOriginal().getViewVector(1.0F);
-                    target.teleportTo(executer.getOriginal().getX() + viewVec.x() * 1.75, executer.getOriginal().getY(), executer.getOriginal().getZ() + viewVec.z() * 1.75);
+                    target.teleportTo(executer.getOriginal().getX() + viewVec.x() * 1.55, executer.getOriginal().getY(), executer.getOriginal().getZ() + viewVec.z() * 1.55);
                     if (target.hasEffect(EpicFightMobEffects.STUN_IMMUNITY.get())) target.removeEffect(EpicFightMobEffects.STUN_IMMUNITY.get());
                     if (target.hasEffect(com.guhao.stars.regirster.Effect.REALLY_STUN_IMMUNITY.get())) target.removeEffect(com.guhao.stars.regirster.Effect.REALLY_STUN_IMMUNITY.get());
                     if (!target.isAlive()) return;
@@ -195,29 +213,33 @@ public class SacrificeSkill extends WeaponInnateSkill {
                                             double endOffsetX = startX - offsetX;
                                             double endOffsetY = startY - offsetY;
                                             double endOffsetZ = startZ - offsetZ;
-
-                                            // 添加粒子效果
-                                            Level level = target.level();
-                                            level.addParticle(ParticleType.GUHAO_LASER.get(), startOffsetX, startOffsetY, startOffsetZ, endOffsetX, endOffsetY, endOffsetZ);
-                                            level.addParticle(ParticleType.ONE_JC_BLOOD_JUDGEMENT_LONG.get(), startX, startY + 20, startZ, startX, startY - 20, startZ);
+                                            GuhaoMod.NETWORK_CHANNEL.send(
+                                                    PacketDistributor.TRACKING_ENTITY.with(() -> target),
+                                                    new ParticlePacket(
+                                                            ParticleType.GUHAO_LASER.get(),
+                                                            startOffsetX, startOffsetY, startOffsetZ,
+                                                            endOffsetX, endOffsetY, endOffsetZ
+                                                    )
+                                            );
+                                            GuhaoMod.NETWORK_CHANNEL.send(
+                                                    PacketDistributor.TRACKING_ENTITY.with(() -> target),
+                                                    new ParticlePacket(
+                                                            ParticleType.ONE_JC_BLOOD_JUDGEMENT_LONG.get(),
+                                                            startX, startY + 20, startZ,
+                                                            startX, startY - 20, startZ
+                                                    )
+                                            );
                                         }
                                     }
                                     target.hurt(new DamageSource(target.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.FELL_OUT_OF_WORLD), entitypatch.getOriginal()), target.getHealth()*10.0f);
-                            entitypatch.playSound(Sounds.SEKIRO.get(), 1f, 1f, 1f);
-                                ArrayUtils.playSound(target,EpicFightSounds.LASER_BLAST.get(), 1.0f,1.0f,1.0f);
-                                ArrayUtils.playSound(target, com.guhao.init.Sounds.BIU.get(), 1.0f,1.0f,1.0f);
-                            MinecraftForge.EVENT_BUS.unregister(this);
+                            ArrayUtils.playSound(target,EpicFightSounds.LASER_BLAST.get(), 1.0f,1.0f,1.0f);
+                            ArrayUtils.playSound(target, com.guhao.init.Sounds.BIU.get(), 1.0f,1.0f,1.0f);
+
                         });
                 }, AnimationEvent.Side.BOTH)), 0.0F);
-
                 executer.getSkill(SkillSlots.WEAPON_INNATE).setStack(0);
                 super.executeOnServer(executer, args);
-                break;
-            }
-            if (this.comboAnimation.containsKey(animation)) {
-                executer.playAnimationSynchronized(this.comboAnimation.get(animation), 0.0F);
-                super.executeOnServer(executer, args);
-                break;
+                return;
             }
             if (executer.getOriginal().isShiftKeyDown() && (executer.getSkill(SkillSlots.WEAPON_INNATE).getStack() >= 10)) {
                 if (executer.getOriginal().hasEffect(Effect.GUHAO.get())) {
@@ -238,29 +260,34 @@ public class SacrificeSkill extends WeaponInnateSkill {
                     executer.setStamina(0.0F);
                     super.executeOnServer(executer, args);
                 }
-                break;
+                return;
+            }
+            if (this.comboAnimation.containsKey(animation)) {
+                executer.playAnimationSynchronized(this.comboAnimation.get(animation), 0.0F);
+                super.executeOnServer(executer, args);
+                return;
             }
 ///////////////////////////////////////////////////////////////////////////
             if (executer.getSkill(SkillSlots.WEAPON_INNATE).getDataManager().getDataValue(IS_CTRL_DOWN.get())) {
                 int i = args.readInt();
                 executer.playAnimationSynchronized(this.animations[i].get(), 0.0F);
                 super.executeOnServer(executer, args);
-                break;
+                return;
             }
 ///////////////////////////////////////////////////////////////////////////
             if (isOnGround && !isStop && isSheathed) {
                 executer.playAnimationSynchronized(GuHaoAnimations.SETTLEMENT, 0.0F);
                 super.executeOnServer(executer, args);
-                break;
+                return;
             } else {
                     if (isSheathed) {
                         executer.playAnimationSynchronized(GuHaoAnimations.GUHAO_BATTOJUTSU_DASH, -0.694F);
                         super.executeOnServer(executer, args);
-                        break;
+                        return;
                     } else {
                         executer.playAnimationSynchronized(GuHaoAnimations.GUHAO_BATTOJUTSU_DASH, 0.0F);
                         super.executeOnServer(executer, args);
-                        break;
+                        return;
                     }
             }
         }

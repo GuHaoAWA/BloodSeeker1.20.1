@@ -1,0 +1,18 @@
+{
+  "targets": [
+    "swap"
+  ],
+  "passes": [
+    {
+      "name": "particle_distortion",
+      "intarget": "minecraft:main",
+      "outtarget": "swap",
+      "uniforms": [
+        { "name": "Time", "type": "float" },
+        { "name": "ScreenSize", "type": "vec2" },
+        { "name": "ParticleData", "type": "vec4", "count": 10 },
+        { "name": "ParticleCount", "type": "int" }
+      ]
+    }
+  ]
+}

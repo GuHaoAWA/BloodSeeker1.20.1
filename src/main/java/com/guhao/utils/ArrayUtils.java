@@ -1,7 +1,7 @@
 package com.guhao.utils;
 
 import com.guhao.epicfight.GuHaoAnimations;
-import com.guhao.stars.efmex.StarAnimations;
+import net.corruptdog.cdm.gameasset.CorruptAnimations;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.LivingEntity;
 import reascer.wom.gameasset.WOMAnimations;
@@ -14,11 +14,15 @@ public record ArrayUtils() {
     static final StaticAnimation[] EYES;
     static {
         EYES = new StaticAnimation[] {
+                GuHaoAnimations.GUHAO_UCHIGATANA_SHEATHING_AUTO,
+                GuHaoAnimations.GUHAO_UCHIGATANA_SHEATHING_DASH,
+                GuHaoAnimations.GUHAO_UCHIGATANA_SHEATH_AIR_SLASH,
+                GuHaoAnimations.GUHAO_UCHIGATANA_SHEATHING_AUTO_EX,
 
                 WOMAnimations.KATANA_AUTO_1,
                 WOMAnimations.KATANA_AUTO_2,
                 WOMAnimations.KATANA_AUTO_3,
-                Animations.TACHI_AUTO2,
+                CorruptAnimations.SWORD_ONEHAND_AUTO3,
                 GuHaoAnimations.GUHAO_DASH_2,
                 GuHaoAnimations.GUHAO_DASH,
                 GuHaoAnimations.HERRSCHER_AUTO_3,

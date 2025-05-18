@@ -7,6 +7,7 @@ import com.guhao.epicfight.GuHaoSkillDataKeys;
 import com.guhao.epicfight.skills.GuHaoSkills;
 import com.guhao.init.ParticleType;
 import com.mojang.logging.LogUtils;
+import net.corruptdog.cdm.gameasset.CorruptAnimations;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import org.slf4j.Logger;
@@ -48,7 +49,7 @@ public class GuHaoCapability {
                     WOMAnimations.KATANA_AUTO_1,
                     WOMAnimations.KATANA_AUTO_2,
                     WOMAnimations.KATANA_AUTO_3,
-                    Animations.TACHI_AUTO2,
+                    CorruptAnimations.SWORD_ONEHAND_AUTO3,
                     GuHaoAnimations.HERRSCHER_AUTO_3,
                     GuHaoAnimations.GUHAO_DASH_2,
                     GuHaoAnimations.NB_ATTACK)
