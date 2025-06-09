@@ -9,13 +9,13 @@ import com.dfdyz.epicacg.utils.MoveCoordFuncUtils;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
 import com.guhao.GuHaoColliderPreset;
+import com.guhao.api.SpecialActionAnimation;
 import com.guhao.epicfight.skills.GuHaoSkills;
 import com.guhao.init.Effect;
 import com.guhao.init.ParticleType;
 import com.guhao.ranksystem.ServerEventExtra;
 import com.guhao.stars.regirster.Sounds;
 import com.guhao.utils.BattleUtils;
-import com.p1nero.wukong.epicfight.animation.custom.SpecialActionAnimation;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -208,8 +208,8 @@ public class GuHaoAnimations {
                 .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND, EpicFightSounds.WHOOSH_SHARP.get())
                 .addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.HOLD)
                 .addProperty(AnimationProperty.AttackAnimationProperty.EXTRA_COLLIDERS, 2)
-                .addProperty(AnimationProperty.ActionAnimationProperty.RESET_PLAYER_COMBO_COUNTER, false)
-                .newTimePair(0.0F, 0.25F).addStateRemoveOld(EntityState.CAN_BASIC_ATTACK, false);
+                .addProperty(AnimationProperty.ActionAnimationProperty.RESET_PLAYER_COMBO_COUNTER, false);
+                
         GUHAO_UCHIGATANA_SHEATH_AIR_SLASH = (new AirSlashAnimation(0.1F, 0.1F, 0.16F, 0.3F, null, biped.toolR, "biped/uchigatana_sheath_airslash", biped))
                 .addProperty(AnimationProperty.AttackPhaseProperty.ARMOR_NEGATION_MODIFIER, ValueModifier.adder(30.0F))
                 .addProperty(AnimationProperty.AttackPhaseProperty.MAX_STRIKES_MODIFIER, ValueModifier.adder(2.0F))
@@ -311,7 +311,7 @@ public class GuHaoAnimations {
                     HitResult ray = entitypatch.getOriginal().pick(10.0, 0.7F, false);
                     entitypatch.getOriginal().level().addParticle(ParticleType.GUHAO_LASER.get(), (double) transformMatrix.m30 + entitypatch.getOriginal().getX(), (double) transformMatrix.m31 + entitypatch.getOriginal().getEyeY()-1.12, (double) transformMatrix.m32 + ((LivingEntity) entitypatch.getOriginal()).getZ(), ray.getLocation().x, ray.getLocation().y, ray.getLocation().z);
                 }, AnimationEvent.Side.CLIENT))
-                .newTimePair(0.0F, 0.25F).addStateRemoveOld(EntityState.CAN_BASIC_ATTACK, false);;
+                ;
 
         BLOOD_JUDGEMENT = (new BasicMultipleAttackAnimation(0.1F, "biped/blood_judgement", biped,
                 new AttackAnimation.Phase(0.0F, 0.3F, 0.52F, 1.20F, 1.20F, biped.toolR, GuHaoColliderPreset.SACRIFICE_ATTACK)
@@ -427,6 +427,7 @@ public class GuHaoAnimations {
                 .addProperty(AnimationProperty.ActionAnimationProperty.COORD_SET_TICK, MoveCoordFuncUtils.TraceLockedTargetEx(7.5F))
                 .addProperty(AnimationProperty.StaticAnimationProperty.TIME_STAMPED_EVENTS, new AnimationEvent.TimeStampedEvent[]{
                         AnimationEvent.TimeStampedEvent.create(0.365F, (ep, anim, objs) -> {Vec3 pos = ep.getOriginal().position();ep.playSound(EpicFightSounds.ROLL.get(), 0, 0);ep.getOriginal().level().addAlwaysVisibleParticle(EpicFightParticles.AIR_BURST.get(), pos.x, pos.y + ep.getOriginal().getBbHeight() * 0.5D, pos.z, 0, -1, 2);}, AnimationEvent.Side.CLIENT),
+                        AnimationEvent.TimeStampedEvent.create(2.20F, Animations.ReusableSources.FRACTURE_GROUND_SIMPLE, AnimationEvent.Side.CLIENT).params(new Vec3f(0.0F, -0.25F, 0f), Armatures.BIPED.rootJoint, 1.25, 0.2F),
                         AnimationEvent.TimeStampedEvent.create(2.56F, (ep, anim, objs) -> {
                             Vec3 playerPos = ep.getOriginal().position();
                             Vec3 lookVec = ep.getOriginal().getLookAngle();
@@ -434,8 +435,8 @@ public class GuHaoAnimations {
                             if (ep.getOriginal().level() instanceof ServerLevel serverLevel) serverLevel.sendParticles(ParticleType.ONE_JC_BLOOD_JUDGEMENT_LONG.get(), frontPos.x, frontPos.y, frontPos.z, 1, 0.05, 0, 0.05, 1);
                         }, AnimationEvent.Side.SERVER)
                 })
-                .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, DENGLONG)
-                .newTimePair(0.0F, 0.25F).addStateRemoveOld(EntityState.CAN_BASIC_ATTACK, false);
+                .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, DENGLONG);
+                
 //                .addProperty(ClientAnimationProperties.TRAIL_EFFECT, newTFL(newTF(0.93F, 1.35F, 9, biped.toolR, InteractionHand.MAIN_HAND)));
         GUHAO_UCHIGATANA_SCRAP = (new SpecialAttackAnimation(0.05F, 0.135F, 0.155F, 0.155F, GuHaoColliderPreset.CUT_IN, biped.rootJoint, "biped/uchigatana_scrap", biped))
                 .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(1.2F))
@@ -455,7 +456,7 @@ public class GuHaoAnimations {
         JIANQIE = (new BasicAttackAnimation(0.1F, 0.35F,0.35F, 0.6F, 0.6F, null, biped.toolR, "biped/jianqie", biped)
                 .addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.LONG))
                 .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(1.5f))
-                .addProperty(AnimationProperty.AttackPhaseProperty.IMPACT_MODIFIER, ValueModifier.multiplier(3.0f))
+                .addProperty(AnimationProperty.AttackPhaseProperty.IMPACT_MODIFIER, ValueModifier.multiplier(2.5f))
                 .addProperty(AnimationProperty.AttackAnimationProperty.ATTACK_SPEED_FACTOR, 0.0F)
                 .addProperty(AnimationProperty.AttackAnimationProperty.FIXED_MOVE_DISTANCE, true)
                 .addProperty(AnimationProperty.ActionAnimationProperty.CANCELABLE_MOVE, false)

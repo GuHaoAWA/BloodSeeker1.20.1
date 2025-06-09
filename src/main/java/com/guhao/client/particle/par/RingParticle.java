@@ -112,11 +112,10 @@ public class RingParticle extends TextureSheetParticleN {
         vertexBuffer.vertex((double)avector3f[3].x(), (double)avector3f[3].y(), (double)avector3f[3].z()).uv(f7, f6).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
         Player player = Minecraft.getInstance().player;
         if (player != null) {
-            // 计算插值后的玩家位置以实现平滑移动
             double x = Mth.lerp(pt, player.xOld, player.getX());
             double y = Mth.lerp(pt, player.yOld, player.getY()) + 0.05;
             double z = Mth.lerp(pt, player.zOld, player.getZ());
-            this.setPos(x, y, z); // 更新粒子位置
+            this.setPos(x, y, z);
         }
     }
 

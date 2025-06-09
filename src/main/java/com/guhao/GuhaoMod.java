@@ -2,13 +2,17 @@ package com.guhao;
 
 
 import com.guhao.capability.GuHaoCapability;
+import com.guhao.client.sky.SkyEyeRenderer;
 import com.guhao.epicfight.GuHaoAnimations;
 import com.guhao.epicfight.GuHaoSkillDataKeys;
 import com.guhao.init.*;
+import com.guhao.network.GuHaoEffectPacket;
 import com.guhao.network.ParticlePacket;
 import com.mojang.logging.LogUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -70,6 +74,15 @@ public class GuhaoMod {
                 ParticlePacket::decode,
                 ParticlePacket::handle
         );
+        NETWORK_CHANNEL.registerMessage(
+                packetId++,
+                GuHaoEffectPacket.class,
+                GuHaoEffectPacket::encode,
+                GuHaoEffectPacket::decode,
+                GuHaoEffectPacket::handle
+        );
+
+        MinecraftForge.EVENT_BUS.register(SkyEyeRenderer.class);
     }
 
     public static <T> void addNetworkMessage(Class<T> messageType, BiConsumer<T, FriendlyByteBuf> encoder, Function<FriendlyByteBuf, T> decoder, BiConsumer<T, Supplier<NetworkEvent.Context>> messageConsumer) {
@@ -80,7 +93,6 @@ public class GuhaoMod {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-
         }
     }
     private void setupClient(final FMLClientSetupEvent event){
@@ -123,6 +135,18 @@ public class GuhaoMod {
             });
             actions.forEach(e -> e.getKey().run());
             workQueue.removeAll(actions);
+
+
+            for (Player player : event.getServer().getPlayerList().getPlayers()) {
+                if (player.getMainHandItem().is(Items.GUHAO.get()) && player.hasEffect(Effect.GUHAO.get())) {
+                    SkyEyeRenderer.isOpen = true;
+                    break;
+                } else {
+                    SkyEyeRenderer.isOpen = false;
+                }
+            }
+
         }
     }
+
 }

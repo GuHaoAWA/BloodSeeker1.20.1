@@ -1,7 +1,9 @@
 {
 	"trail_effects": [
 		{
-			"start_time": 2.016,
+			"begin_pos": [0.0, 0.0, -0.19],
+			"end_pos": [0.0, -0.24, -2.85],
+			"start_time": 2.00,
 			"end_time": 3.0,
 			"lifetime": 10,
 			"joint": "Tool_R",

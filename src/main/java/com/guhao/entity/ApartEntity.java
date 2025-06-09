@@ -3,7 +3,6 @@ package com.guhao.entity;
 import com.dfdyz.epicacg.registry.Sounds;
 import com.dfdyz.epicacg.utils.MoveCoordFuncUtils;
 import com.guhao.init.Entities;
-import com.p1nero.wukong.entity.FakeWukongEntity;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;

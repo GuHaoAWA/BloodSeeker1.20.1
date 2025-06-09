@@ -19,6 +19,7 @@ import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
@@ -30,6 +31,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.network.PacketDistributor;
+import reascer.wom.animation.attacks.BasicMultipleAttackAnimation;
 import reascer.wom.gameasset.WOMAnimations;
 import yesman.epicfight.api.animation.StaticAnimationProvider;
 import yesman.epicfight.api.animation.property.AnimationEvent;
@@ -38,11 +40,14 @@ import yesman.epicfight.api.animation.types.AttackAnimation;
 import yesman.epicfight.api.animation.types.DynamicAnimation;
 import yesman.epicfight.api.animation.types.EntityState;
 import yesman.epicfight.api.animation.types.StaticAnimation;
+import yesman.epicfight.api.utils.math.ValueModifier;
 import yesman.epicfight.client.events.engine.ControllEngine;
 import yesman.epicfight.client.world.capabilites.entitypatch.player.LocalPlayerPatch;
 import yesman.epicfight.gameasset.Animations;
 import yesman.epicfight.gameasset.EpicFightSounds;
+import yesman.epicfight.network.EpicFightNetworkManager;
 import yesman.epicfight.network.client.CPExecuteSkill;
+import yesman.epicfight.network.server.SPSkillExecutionFeedback;
 import yesman.epicfight.skill.Skill;
 import yesman.epicfight.skill.SkillContainer;
 import yesman.epicfight.skill.SkillSlots;
@@ -169,35 +174,40 @@ public class SacrificeSkill extends WeaponInnateSkill {
         boolean isStop = executer.getOriginal().isSprinting();
         boolean isOnGround = executer.getOriginal().onGround();
         DynamicAnimation animation = executer.getAnimator().getPlayerFor(null).getAnimation();
+        Skill skill = executer.getSkill(this).getSkill();
         while (true) {
 //            executer.playSound(Sounds.CHUA.get(),0.75f,1.0f,1.0f);
             if (executer.getTarget() != null && ((executer.getSkill(SkillSlots.WEAPON_INNATE).getStack() >= 12 && ((executer.getTarget().getHealth() <= executer.getTarget().getMaxHealth() * 0.1f) || (executer.getTarget().getHealth() <= 10.0f))) && !isOnGround)) {
                 executer.playSound(Sounds.SEKIRO.get(), 1f, 1f, 1f);
-                executer.playAnimationSynchronized(WOMAnimations.AGONY_CLAWSTRIKE.addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, (a,b,c,d,e) -> 0.8F)
-                        .addEvents(AnimationProperty.StaticAnimationProperty.ON_BEGIN_EVENTS, AnimationEvent.create((entitypatch, animation2, params) -> {
-                    LivingEntity target = entitypatch.getTarget();
-                            GuhaoMod.NETWORK_CHANNEL.send(
-                                    PacketDistributor.TRACKING_ENTITY.with(() -> target),
-                                    new ParticlePacket(
-                                            ParticleType.TWO_EYE.get(),
-                                            target.getX(), target.getEyeY(), target.getZ(),
-                                            target.getX(), target.getEyeY(), target.getZ()
-                                    )
-                            );
-                    Vec3 viewVec = executer.getOriginal().getViewVector(1.0F);
-                    target.teleportTo(executer.getOriginal().getX() + viewVec.x() * 1.55, executer.getOriginal().getY(), executer.getOriginal().getZ() + viewVec.z() * 1.55);
-                    if (target.hasEffect(EpicFightMobEffects.STUN_IMMUNITY.get())) target.removeEffect(EpicFightMobEffects.STUN_IMMUNITY.get());
-                    if (target.hasEffect(com.guhao.stars.regirster.Effect.REALLY_STUN_IMMUNITY.get())) target.removeEffect(com.guhao.stars.regirster.Effect.REALLY_STUN_IMMUNITY.get());
-                    if (!target.isAlive()) return;
-                    entitypatch.playSound(com.guhao.init.Sounds.CHARGE.get(),1.2f,1.1f,1.1f);
-                            GuhaoMod.queueServerWork(40, () -> {
-                            if (!target.isAlive()) return;
-                            Random random = new Random();
-                                    double distance = 500;
-                                    // 生成指定数量的粒子
-                                    for (int i = 0; i < 4; i++) {
-                                        // 生成随机的偏移量
-                                        for (int j = 0; j < 3; j++) {
+                StaticAnimation agony_clawstrike = WOMAnimations.AGONY_CLAWSTRIKE;
+                if (agony_clawstrike instanceof BasicMultipleAttackAnimation zhenchujue) {
+                    zhenchujue
+                            .addProperty(AnimationProperty.AttackPhaseProperty.IMPACT_MODIFIER, ValueModifier.multiplier(4.5f))
+                            .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, (a, b, c, d, e) -> 0.8F)
+                            .addEvents(AnimationProperty.StaticAnimationProperty.ON_BEGIN_EVENTS, AnimationEvent.create((entitypatch, animation2, params) -> {
+                                LivingEntity target = entitypatch.getTarget();
+                                GuhaoMod.NETWORK_CHANNEL.send(
+                                        PacketDistributor.TRACKING_ENTITY.with(() -> target),
+                                        new ParticlePacket(
+                                                ParticleType.TWO_EYE.get(),
+                                                target.getX(), target.getEyeY(), target.getZ(),
+                                                target.getX(), target.getEyeY(), target.getZ()
+                                        )
+                                );
+                                Vec3 viewVec = executer.getOriginal().getViewVector(1.0F);
+                                target.teleportTo(executer.getOriginal().getX() + viewVec.x() * 1.55, executer.getOriginal().getY(), executer.getOriginal().getZ() + viewVec.z() * 1.55);
+                                if (target.hasEffect(EpicFightMobEffects.STUN_IMMUNITY.get()))
+                                    target.removeEffect(EpicFightMobEffects.STUN_IMMUNITY.get());
+                                if (target.hasEffect(com.guhao.stars.regirster.Effect.REALLY_STUN_IMMUNITY.get()))
+                                    target.removeEffect(com.guhao.stars.regirster.Effect.REALLY_STUN_IMMUNITY.get());
+                                if (!target.isAlive()) return;
+                                entitypatch.playSound(com.guhao.init.Sounds.CHARGE.get(), 1.2f, 1.1f, 1.1f);
+                                GuhaoMod.queueServerWork(40, () -> {
+                                    if (!target.isAlive()) return;
+                                    Random random = new Random();
+                                    double distance = 400;
+                                    for (int i = 0; i < 5; i++) {
+                                        for (int j = 0; j < 4; j++) {
                                             double startX = target.getX();
                                             double startY = target.getY();
                                             double startZ = target.getZ();
@@ -231,63 +241,64 @@ public class SacrificeSkill extends WeaponInnateSkill {
                                             );
                                         }
                                     }
-                                    target.hurt(new DamageSource(target.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.FELL_OUT_OF_WORLD), entitypatch.getOriginal()), target.getHealth()*10.0f);
-                            ArrayUtils.playSound(target,EpicFightSounds.LASER_BLAST.get(), 1.0f,1.0f,1.0f);
-                            ArrayUtils.playSound(target, com.guhao.init.Sounds.BIU.get(), 1.0f,1.0f,1.0f);
-
-                        });
-                }, AnimationEvent.Side.BOTH)), 0.0F);
-                executer.getSkill(SkillSlots.WEAPON_INNATE).setStack(0);
-                super.executeOnServer(executer, args);
-                return;
+                                    target.hurt(new DamageSource(target.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.FELL_OUT_OF_WORLD), entitypatch.getOriginal()), target.getHealth() * 10.0f);
+                                    ArrayUtils.playSound(target, EpicFightSounds.LASER_BLAST.get(), 1.0f, 1.0f, 1.0f);
+                                    ArrayUtils.playSound(target, com.guhao.init.Sounds.BIU.get(), 1.0f, 1.0f, 1.0f);
+                                });
+                            }, AnimationEvent.Side.SERVER));
+                executer.playAnimationSynchronized(zhenchujue,0.0F);
             }
-            if (executer.getOriginal().isShiftKeyDown() && (executer.getSkill(SkillSlots.WEAPON_INNATE).getStack() >= 10)) {
+                super.executeOnServer(executer, args);
+                skill.setStackSynchronize(executer,0);
+                break;
+            }
+            if (executer.getOriginal().isShiftKeyDown() && (executer.getSkill(SkillSlots.WEAPON_INNATE).getStack() >= 9)) {
                 if (executer.getOriginal().hasEffect(Effect.GUHAO.get())) {
                     if (isSheathed) {
                         executer.playAnimationSynchronized(GuHaoAnimations.BLOOD_JUDGEMENT, -0.3F);
-                        executer.getSkill(SkillSlots.WEAPON_INNATE).setStack(4);
                         executer.setStamina(executer.getStamina() * 0.66F);
                         super.executeOnServer(executer, args);
+                        skill.setStackSynchronize(executer,4);
                     } else {
                         executer.playAnimationSynchronized(GuHaoAnimations.BLOOD_JUDGEMENT, 0.0F);
-                        executer.getSkill(SkillSlots.WEAPON_INNATE).setStack(3);
                         executer.setStamina(executer.getStamina() * 0.5F);
                         super.executeOnServer(executer, args);
+                        skill.setStackSynchronize(executer,3);
                     }
                 } else {
                     executer.playAnimationSynchronized(GuHaoAnimations.SACRIFICE, 0.0F);
-                    executer.getSkill(SkillSlots.WEAPON_INNATE).setStack(0);
                     executer.setStamina(0.0F);
                     super.executeOnServer(executer, args);
+                    skill.setStackSynchronize(executer,1);
                 }
-                return;
+                break;
             }
             if (this.comboAnimation.containsKey(animation)) {
                 executer.playAnimationSynchronized(this.comboAnimation.get(animation), 0.0F);
                 super.executeOnServer(executer, args);
-                return;
+                break;
             }
 ///////////////////////////////////////////////////////////////////////////
             if (executer.getSkill(SkillSlots.WEAPON_INNATE).getDataManager().getDataValue(IS_CTRL_DOWN.get())) {
                 int i = args.readInt();
                 executer.playAnimationSynchronized(this.animations[i].get(), 0.0F);
                 super.executeOnServer(executer, args);
-                return;
+                break;
             }
 ///////////////////////////////////////////////////////////////////////////
             if (isOnGround && !isStop && isSheathed) {
                 executer.playAnimationSynchronized(GuHaoAnimations.SETTLEMENT, 0.0F);
                 super.executeOnServer(executer, args);
-                return;
+                break;
             } else {
                     if (isSheathed) {
                         executer.playAnimationSynchronized(GuHaoAnimations.GUHAO_BATTOJUTSU_DASH, -0.694F);
                         super.executeOnServer(executer, args);
-                        return;
+                        break;
                     } else {
                         executer.playAnimationSynchronized(GuHaoAnimations.GUHAO_BATTOJUTSU_DASH, 0.0F);
                         super.executeOnServer(executer, args);
-                        return;
+                        break;
                     }
             }
         }

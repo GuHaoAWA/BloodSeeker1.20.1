@@ -1,6 +1,5 @@
 package com.guhao.client.particle.par;
 
-import com.dfdyz.epicacg.client.particle.EntityAfterImgParticleEx;
 import com.dfdyz.epicacg.client.render.EpicACGRenderType;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -30,14 +29,11 @@ import yesman.epicfight.api.utils.math.OpenMatrix4f;
 import yesman.epicfight.api.utils.math.QuaternionUtils;
 import yesman.epicfight.client.ClientEngine;
 import yesman.epicfight.client.particle.CustomModelParticle;
-import yesman.epicfight.client.particle.EntityAfterImageParticle;
 import yesman.epicfight.client.renderer.EpicFightRenderTypes;
 import yesman.epicfight.client.renderer.patched.entity.PatchedEntityRenderer;
 import yesman.epicfight.client.renderer.shader.AnimationShaderInstance;
 import yesman.epicfight.world.capabilities.EpicFightCapabilities;
 import yesman.epicfight.world.capabilities.entitypatch.LivingEntityPatch;
-
-import java.awt.*;
 
 public class After_Image_BloodParticle extends CustomModelParticle<AnimatedMesh> {
     private final OpenMatrix4f[] poseMatrices;

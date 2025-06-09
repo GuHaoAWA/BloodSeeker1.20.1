@@ -6,6 +6,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RegisterShadersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.joml.Vector4f;
@@ -18,12 +20,13 @@ import net.minecraft.server.packs.resources.ResourceProvider;
 
 import java.io.IOException;
 
+@OnlyIn(Dist.CLIENT)
 public class ParticlePostProcessor {
     private static final List<Vector4f> activeParticles = new ArrayList<>();
     private static ShaderInstance distortionShader;
     private static final int MAX_PARTICLES = 10;
     private static final ResourceLocation SHADER_LOCATION =
-            new ResourceLocation("guhao", "shaders/post/particle_distortion.json");
+            new ResourceLocation("guhao", "particle_distortion");
 
     // ========== 着色器注册部分 ==========
     public static void registerShaders(ResourceProvider provider) throws IOException {

@@ -11,7 +11,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.function.Supplier;
 
-// 在您的Mod网络注册类中注册此数据包
 public class ParticlePacket {
     private final ParticleType<?> particleType;
     private final double x1, y1, z1, x2, y2, z2;

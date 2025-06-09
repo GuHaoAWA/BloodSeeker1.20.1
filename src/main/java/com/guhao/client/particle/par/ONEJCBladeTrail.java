@@ -13,6 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
 import java.util.Random;
@@ -142,7 +143,7 @@ public class ONEJCBladeTrail extends SingleQuadParticle {
     static BloomParticleRenderType renderType = getBloomRenderTypeByTexture(texture);
 
     @Override
-    public ParticleRenderType getRenderType() {
+    public @NotNull ParticleRenderType getRenderType() {
         return renderType;
     }
 

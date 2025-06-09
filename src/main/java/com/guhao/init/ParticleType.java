@@ -21,6 +21,7 @@ public class ParticleType {
     public static final DeferredRegister<net.minecraft.core.particles.ParticleType<?>> PARTICLES;
     public static final RegistryObject<SimpleParticleType> TRAIL_GUHAO;
     public static final RegistryObject<SimpleParticleType> TRAIL_GUHAO_BLOOM;
+    public static final RegistryObject<SimpleParticleType> TRAIL_GUHAO_SPACE;
     public static final RegistryObject<SimpleParticleType> EYE;
     public static final RegistryObject<SimpleParticleType> TWO_EYE;
     public static final RegistryObject<SimpleParticleType> RING;
@@ -37,6 +38,7 @@ public class ParticleType {
     @SubscribeEvent
     public static void RP(RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(TRAIL_GUHAO_BLOOM.get(), BloomTrailParticleGuhao.Provider::new);
+        event.registerSpriteSet(TRAIL_GUHAO_SPACE.get(), SpaceTrailParticle.Provider::new);
         event.registerSpriteSet(EYE.get(), EyeParticle.EyeParticleProvider::new);
         event.registerSpriteSet(TWO_EYE.get(), TwoEyeParticle.EyeParticleProvider::new);
         event.registerSpriteSet(RING.get(), RingParticle.RingParticleProvider::new);
@@ -58,6 +60,7 @@ public class ParticleType {
         PARTICLES = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, MODID);
         TRAIL_GUHAO = PARTICLES.register("trail_guhao", () -> new SimpleParticleType(true));
         TRAIL_GUHAO_BLOOM = PARTICLES.register("trail_guhao_bloom", () -> new SimpleParticleType(true));
+        TRAIL_GUHAO_SPACE = PARTICLES.register("trail_guhao_space", () -> new SimpleParticleType(true));
         EYE = PARTICLES.register("eye", () -> new HitParticleType(true, HitParticleType.RANDOM_WITHIN_BOUNDING_BOX, HitParticleType.ZERO));
         RING = PARTICLES.register("ring", () -> new SimpleParticleType(true));
         TWO_EYE = PARTICLES.register("two_eye", () -> new SimpleParticleType(true));

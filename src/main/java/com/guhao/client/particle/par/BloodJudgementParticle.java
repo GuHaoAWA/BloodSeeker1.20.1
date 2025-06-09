@@ -53,7 +53,8 @@ public class BloodJudgementParticle extends NoRenderParticle {
             double yCoord = radius * Math.sin(randPhi) * Math.sin(randTheta); // 根据球面坐标公式计算y坐标
             double zCoord = radius * Math.cos(randPhi); // 根据球面坐标公式计算z坐标
             RenderUtils.AddParticle(this.level, new BloodBladeTrail(this.level, sx + this.x, sy + this.y + 1.2, sz + this.z, 0, (ey - sy)*4, 0));
-            RenderUtils.AddParticle(this.level, new BloodBladeTrail(this.level, sx + this.x, -(sy + this.y + 1.2), sz + this.z, 0, -((ey - sy)*4), 0));
+            RenderUtils.AddParticle(this.level, new BloodBladeTrail(this.level, sx + this.x, sy + this.y + 1.2, sz + this.z, 0, (ey - sy)*4, 0));
+            RenderUtils.AddParticle(this.level, new BloodBladeTrail(this.level, sx + this.x, sy + this.y + 1.2, sz + this.z, 0, (ey - sy)*4, 0));
         }
 
     }
