@@ -4,9 +4,11 @@ import com.guhao.init.Effect;
 import com.guhao.item.GUHAO;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import software.bernie.geckolib.model.GeoModel;
 
-
+@OnlyIn(Dist.CLIENT)
 public class GUHAOModel extends GeoModel<GUHAO> {
 	@Override
 	public ResourceLocation getAnimationResource(GUHAO animatable) {

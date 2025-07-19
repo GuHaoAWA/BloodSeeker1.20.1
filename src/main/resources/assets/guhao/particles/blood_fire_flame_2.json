@@ -1,5 +1,11 @@
 {
-  "textures": [
-    "guhao:bloodflame2particle"
+  "textures":
+  [
+    "guhao:flame1",
+    "guhao:flame2",
+    "guhao:flame3",
+    "guhao:flame4",
+    "guhao:flame5",
+    "guhao:flame6"
   ]
 }

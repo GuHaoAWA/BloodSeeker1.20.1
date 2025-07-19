@@ -1,11 +1,13 @@
 package com.guhao.item.model;
 
 import com.guhao.item.SheathItem;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import software.bernie.geckolib.model.GeoModel;
 
 import net.minecraft.resources.ResourceLocation;
 
-
+@OnlyIn(Dist.CLIENT)
 public class SheathItemModel extends GeoModel<SheathItem> {
 	@Override
 	public ResourceLocation getAnimationResource(SheathItem animatable) {

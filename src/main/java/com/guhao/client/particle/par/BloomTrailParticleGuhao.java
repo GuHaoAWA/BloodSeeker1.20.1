@@ -272,76 +272,7 @@ public class BloomTrailParticleGuhao extends TextureSheetParticle {
                 (float) deltaMovement.length() * 0.7f);
     }
 
-    @Override
-    public void render(@NotNull VertexConsumer vertexConsumer, @NotNull Camera camera, float partialTick) {
-        if (this.visibleTrailEdges.isEmpty() ||
-                !PostEffectPipelines.isActive() ||
-                !this.entitypatch.getOriginal().isAlive()) {
-            return;
-        }
 
-        PoseStack poseStack = new PoseStack();
-        setupPoseStack(poseStack, camera, partialTick);
-        Matrix4f matrix4f = poseStack.last().pose();
-
-        int edges = this.visibleTrailEdges.size() - 1;
-        if (edges <= 0) return;
-
-        boolean startFade = this.visibleTrailEdges.get(0).lifetime == 1;
-        boolean endFade = this.visibleTrailEdges.get(edges).lifetime == this.trailInfo.trailLifetime;
-
-        float startEdge = (startFade ? this.trailInfo.interpolateCount * 2 * partialTick : 0.0F) + this.startEdgeCorrection;
-        float endEdge = endFade ? Math.min(edges - (this.trailInfo.interpolateCount * 2) * (1.0F - partialTick), edges - 1) : edges - 1;
-
-        if (endEdge <= startEdge) return;
-
-        float interval = 1.0F / (endEdge - startEdge);
-        float fading = this.animationEnd ?
-                Mth.clamp((this.lifetime + (1.0F - partialTick)) / this.trailInfo.trailLifetime, 0.0F, 1.0F) :
-                1.0F;
-
-        float partialStartEdge = interval * (startEdge % 1.0F);
-        float from = -partialStartEdge;
-        float to = -partialStartEdge + interval;
-        // 动态效果参数
-        float time = (level.getGameTime() + partialTick + timeOffset) * 1.2f;
-        float dynamicIntensity = calculateDynamicIntensity();
-
-        for (int i = (int) startEdge; i < (int) endEdge + 1; i++) {
-            if (i >= visibleTrailEdges.size() - 1) break;
-
-            TrailEdge e1 = this.visibleTrailEdges.get(i);
-            TrailEdge e2 = this.visibleTrailEdges.get(i + 1);
-
-            Vector4f pos1 = applyVertexDistortion(e1.start, time, dynamicIntensity, matrix4f);
-            Vector4f pos2 = applyVertexDistortion(e1.end, time, dynamicIntensity, matrix4f);
-            Vector4f pos3 = applyVertexDistortion(e2.end, time, dynamicIntensity, matrix4f);
-            Vector4f pos4 = applyVertexDistortion(e2.start, time, dynamicIntensity, matrix4f);
-
-            // 应用运动模糊
-            applyMotionBlur(pos1, pos2, pos3, pos4, i, edges);
-
-            // 计算颜色和透明度
-            float[] colors = calculateVertexColors(time, i, edges, fading);
-            float alphaFrom = calculateAlpha(from, fading);
-            float alphaTo = calculateAlpha(to, fading);
-
-            // 增强边缘效果
-            if (i == (int) startEdge || i == (int) endEdge) {
-                colors[0] = Math.min(colors[0] * 1.2f, 1.0f);
-                alphaFrom *= 1.3f;
-                alphaTo *= 1.3f;
-            }
-
-            // 渲染四边形
-            renderTrailQuad(vertexConsumer, pos1, pos2, pos3, pos4, colors, from, to, alphaFrom, alphaTo);
-
-
-            from += interval;
-            to += interval;
-
-        }
-    }
 
     private float calculateDynamicIntensity() {
         float intensity = DISTORTION_INTENSITY * (0.5f + motionFactor * MOTION_FACTOR_MULTIPLIER);
@@ -451,6 +382,79 @@ public class BloomTrailParticleGuhao extends TextureSheetParticle {
 public @NotNull ParticleRenderType getRenderType() {
     return EpicACGRenderType.getBloomRenderTypeByTexture(trailInfo.texturePath);
 }
+
+    @Override
+    public void render(@NotNull VertexConsumer vertexConsumer, @NotNull Camera camera, float partialTick) {
+
+        if (this.visibleTrailEdges.isEmpty() ||
+                !PostEffectPipelines.isActive() ||
+                !this.entitypatch.getOriginal().isAlive()) {
+            return;
+        }
+//        updateMotionFactor();
+        PoseStack poseStack = new PoseStack();
+        setupPoseStack(poseStack, camera, partialTick);
+        Matrix4f matrix4f = poseStack.last().pose();
+
+        int edges = this.visibleTrailEdges.size() - 1;
+        if (edges <= 0) return;
+
+        boolean startFade = this.visibleTrailEdges.get(0).lifetime == 1;
+        boolean endFade = this.visibleTrailEdges.get(edges).lifetime == this.trailInfo.trailLifetime;
+
+        float startEdge = (startFade ? this.trailInfo.interpolateCount * 2 * partialTick : 0.0F) + this.startEdgeCorrection;
+        float endEdge = endFade ? Math.min(edges - (this.trailInfo.interpolateCount * 2) * (1.0F - partialTick), edges - 1) : edges - 1;
+
+        if (endEdge <= startEdge) return;
+
+        float interval = 1.0F / (endEdge - startEdge);
+        float fading = this.animationEnd ?
+                Mth.clamp((this.lifetime + (1.0F - partialTick)) / this.trailInfo.trailLifetime, 0.0F, 1.0F) :
+                1.0F;
+
+        float partialStartEdge = interval * (startEdge % 1.0F);
+        float from = -partialStartEdge;
+        float to = -partialStartEdge + interval;
+        // 动态效果参数
+        float time = (level.getGameTime() + partialTick + timeOffset) * 1.2f;
+        float dynamicIntensity = calculateDynamicIntensity();
+
+        for (int i = (int) startEdge; i < (int) endEdge + 1; i++) {
+            if (i >= visibleTrailEdges.size() - 1) break;
+
+            TrailEdge e1 = this.visibleTrailEdges.get(i);
+            TrailEdge e2 = this.visibleTrailEdges.get(i + 1);
+
+            Vector4f pos1 = applyVertexDistortion(e1.start, time, dynamicIntensity, matrix4f);
+            Vector4f pos2 = applyVertexDistortion(e1.end, time, dynamicIntensity, matrix4f);
+            Vector4f pos3 = applyVertexDistortion(e2.end, time, dynamicIntensity, matrix4f);
+            Vector4f pos4 = applyVertexDistortion(e2.start, time, dynamicIntensity, matrix4f);
+
+            // 应用运动模糊
+            applyMotionBlur(pos1, pos2, pos3, pos4, i, edges);
+
+            // 计算颜色和透明度
+            float[] colors = calculateVertexColors(time, i, edges, fading);
+            float alphaFrom = calculateAlpha(from, fading);
+            float alphaTo = calculateAlpha(to, fading);
+
+            // 增强边缘效果
+            if (i == (int) startEdge || i == (int) endEdge) {
+                colors[0] = Math.min(colors[0] * 1.2f, 1.0f);
+                alphaFrom *= 1.3f;
+                alphaTo *= 1.3f;
+            }
+            // 渲染四边形
+
+            renderTrailQuad(vertexConsumer, pos1, pos2, pos3, pos4, colors, from, to, alphaFrom, alphaTo);
+
+
+            from += interval;
+            to += interval;
+
+        }
+    }
+
     private void makeTrailEdges(List<Vec3> startPositions, List<Vec3> endPositions, List<TrailEdge> dest) {
         for (int i = 0; i < startPositions.size(); i++) {
             dest.add(new TrailEdge(startPositions.get(i), endPositions.get(i), this.trailInfo.trailLifetime));

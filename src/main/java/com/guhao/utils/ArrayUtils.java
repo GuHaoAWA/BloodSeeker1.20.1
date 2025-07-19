@@ -4,6 +4,8 @@ import com.guhao.epicfight.GuHaoAnimations;
 import net.corruptdog.cdm.gameasset.CorruptAnimations;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import reascer.wom.gameasset.WOMAnimations;
 import yesman.epicfight.api.animation.types.StaticAnimation;
 import yesman.epicfight.gameasset.Animations;
@@ -21,7 +23,7 @@ public record ArrayUtils() {
 
                 WOMAnimations.KATANA_AUTO_1,
                 WOMAnimations.KATANA_AUTO_2,
-                WOMAnimations.KATANA_AUTO_3,
+                GuHaoAnimations.KATANA_AUTO_3,
                 CorruptAnimations.SWORD_ONEHAND_AUTO3,
                 GuHaoAnimations.GUHAO_DASH_2,
                 GuHaoAnimations.GUHAO_DASH,

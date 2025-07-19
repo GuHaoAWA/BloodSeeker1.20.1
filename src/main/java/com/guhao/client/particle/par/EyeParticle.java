@@ -43,6 +43,10 @@ public class EyeParticle extends HitParticle {
         this.lifetime = 7;
         this.gravity = 0f;
         this.hasPhysics = false;
+        Random rand = new Random();
+        float angle = (float)Math.toRadians(180.0F + (rand.nextFloat() - 0.5F) * 360.0F);
+        this.oRoll = angle;
+        this.roll = angle;
         double d = 0.20000000298023224;
         for(int i = 0; i < 4; ++i) {
             double particleMotionX = this.random.nextDouble() * d;
@@ -70,7 +74,7 @@ public class EyeParticle extends HitParticle {
         super.tick();
         Random r = new Random();
         double d = 0.20000000298023224;
-        for(int i = 0; i < 20; ++i) {
+        for(int i = 0; i < 12; ++i) {
             double particleMotionX = this.random.nextDouble() * d;
             d *= this.random.nextBoolean() ? 1.0 : -1.0;
             double particleMotionZ = this.random.nextDouble() * d;

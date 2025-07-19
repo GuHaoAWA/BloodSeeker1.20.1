@@ -40,7 +40,7 @@ public class ApartAttackEvent {
 
         if (sourceentity instanceof ApartEntity) {
             if (!livingEntity.hasEffect(new MobEffectInstance(EXSANGUINATION.get()).getEffect())) livingEntity.addEffect(new MobEffectInstance(new MobEffectInstance(EXSANGUINATION.get()).getEffect(), 200, 1, false, true));
-            else livingEntity.addEffect(new MobEffectInstance(new MobEffectInstance(EXSANGUINATION.get()).getEffect(), 200, Objects.requireNonNull(livingEntity.getEffect(EXSANGUINATION.get())).getAmplifier() + 1, false, true));
+            else livingEntity.addEffect(new MobEffectInstance(new MobEffectInstance(EXSANGUINATION.get()).getEffect(), 200, Objects.requireNonNull(livingEntity.getEffect(EXSANGUINATION.get())).getAmplifier() + 10, false, true));
         }
     }
     @SubscribeEvent

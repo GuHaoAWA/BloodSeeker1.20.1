@@ -19,7 +19,7 @@ import org.joml.Vector3f;
 
 @OnlyIn(Dist.CLIENT)
 public class RedRingParticle extends TextureSheetParticleN {
-
+    private static final float speed = 1.5f;
     @OnlyIn(Dist.CLIENT)
     public static class RedRingParticleProvider implements ParticleProvider<SimpleParticleType> {
         private final SpriteSet spriteSet;
@@ -38,7 +38,7 @@ public class RedRingParticle extends TextureSheetParticleN {
         super(world, x, y, z);
 
         this.setSize(0f, 0f);
-        this.quadSize = 0f;
+        this.quadSize = 0.0f;
 
         this.lifetime = 100;
 
@@ -54,23 +54,9 @@ public class RedRingParticle extends TextureSheetParticleN {
 
     public void render(@NotNull VertexConsumer vertexBuffer, Camera camera, float pt) {
         Vec3 vec3 = camera.getPosition();
-        float f = (float)(Mth.lerp((double)pt, this.xo, this.x) - vec3.x());
-        float f1 = (float)(Mth.lerp((double)pt, this.yo, this.y) - vec3.y());
-        float f2 = (float)(Mth.lerp((double)pt, this.zo, this.z) - vec3.z());
-
-        // Commented out the rotation related code
-        // Quaternion quaternion;
-        // if (this.roll == 0.0F) {
-        //    quaternion = camera.rotation();
-        // } else {
-        //    quaternion = new Quaternion(camera.rotation());
-        //    float f3 = Mth.lerp(pt, this.oRoll, this.roll);
-        //    quaternion.mul(Vector3f.ZP.rotation(f3));
-        // }
-
-        // Commented out the transformed vector
-        // Vector3f vector3f1 = new Vector3f(-1.0F, -1.0F, 0.0F);
-        // vector3f1.transform(quaternion);
+        float f = (float)(Mth.lerp(pt, this.xo, this.x) - vec3.x());
+        float f1 = (float)(Mth.lerp(pt, this.yo, this.y) - vec3.y());
+        float f2 = (float)(Mth.lerp(pt, this.zo, this.z) - vec3.z());
 
         Vector3f[] avector3f = new Vector3f[]{
                 new Vector3f(-1.0F, 0F, -1.0F),
@@ -82,8 +68,6 @@ public class RedRingParticle extends TextureSheetParticleN {
 
         for(int i = 0; i < 4; ++i) {
             Vector3f vector3f = avector3f[i];
-            // Removed the transformation and translation related to the rotation
-            // vector3f.transform(quaternion);
             vector3f.mul(f4);
             vector3f.add(f, f1, f2);
         }
@@ -93,11 +77,11 @@ public class RedRingParticle extends TextureSheetParticleN {
         float f5 = this.getV0();
         float f6 = this.getV1();
         int j = 15728880;
-        vertexBuffer.vertex((double)avector3f[0].x(), (double)avector3f[0].y(), (double)avector3f[0].z()).uv(f8, f6).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
-        vertexBuffer.vertex((double)avector3f[1].x(), (double)avector3f[1].y(), (double)avector3f[1].z()).uv(f8, f5).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
-        vertexBuffer.vertex((double)avector3f[2].x(), (double)avector3f[2].y(), (double)avector3f[2].z()).uv(f7, f5).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
-        vertexBuffer.vertex((double)avector3f[3].x(), (double)avector3f[3].y(), (double)avector3f[3].z()).uv(f7, f6).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
-
+        vertexBuffer.vertex(avector3f[0].x(), avector3f[0].y(), avector3f[0].z()).uv(f8, f6).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
+        vertexBuffer.vertex(avector3f[1].x(), avector3f[1].y(), avector3f[1].z()).uv(f8, f5).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
+        vertexBuffer.vertex(avector3f[2].x(), avector3f[2].y(), avector3f[2].z()).uv(f7, f5).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
+        vertexBuffer.vertex(avector3f[3].x(), avector3f[3].y(), avector3f[3].z()).uv(f7, f6).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
+        quadSize += speed;
     }
     @Override
     public boolean shouldCull() {
@@ -117,7 +101,7 @@ public class RedRingParticle extends TextureSheetParticleN {
     @Override
     public void tick() {
         super.tick();
-        quadSize += 2.0F;
+//        quadSize += 2.0F;
     }
 }
 

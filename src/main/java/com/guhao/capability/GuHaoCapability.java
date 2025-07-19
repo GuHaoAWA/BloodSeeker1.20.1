@@ -38,7 +38,7 @@ public class GuHaoCapability {
             })
             .passiveSkill(GuHaoSkills.GUHAO_PASSIVE)
             .hitSound(EpicFightSounds.BLADE_HIT.get())
-            .hitParticle((HitParticleType) ParticleType.EYE.get())
+            .hitParticle(ParticleType.BLOOD_CUT.get())
             .collider(GuHaoColliderPreset.GUHAO)
             .canBePlacedOffhand(false)
             .newStyleCombo(CapabilityItem.Styles.SHEATH,
@@ -48,7 +48,7 @@ public class GuHaoCapability {
             .newStyleCombo(CapabilityItem.Styles.TWO_HAND,
                     WOMAnimations.KATANA_AUTO_1,
                     WOMAnimations.KATANA_AUTO_2,
-                    WOMAnimations.KATANA_AUTO_3,
+                    GuHaoAnimations.KATANA_AUTO_3,
                     CorruptAnimations.SWORD_ONEHAND_AUTO3,
                     GuHaoAnimations.HERRSCHER_AUTO_3,
                     GuHaoAnimations.GUHAO_DASH_2,

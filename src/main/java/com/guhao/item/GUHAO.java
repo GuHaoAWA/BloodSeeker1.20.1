@@ -1,9 +1,11 @@
 package com.guhao.item;
 
-import com.guhao.client.particle.text.ColorPutter;
-import com.guhao.entity.ApartEntity;
+import com.guhao.client.text.ColorPutter;
+import com.guhao.epicfight.GuHaoSkillDataKeys;
+import com.guhao.epicfight.skills.GuHaoSkills;
 import com.guhao.events.HitEvent;
 import com.guhao.renderers.GUHAORenderer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
@@ -11,7 +13,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
@@ -24,6 +25,8 @@ import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
+import yesman.epicfight.world.capabilities.EpicFightCapabilities;
+import yesman.epicfight.world.capabilities.entitypatch.player.PlayerPatch;
 import yesman.epicfight.world.item.WeaponItem;
 
 import java.util.List;
@@ -139,9 +142,12 @@ public class GUHAO extends WeaponItem implements GeoItem {
     @Override
     @OnlyIn(Dist.CLIENT)
     public boolean isFoil(@NotNull ItemStack itemstack) {
+        if (Minecraft.getInstance().player != null) {
+            PlayerPatch<?> pp = EpicFightCapabilities.getEntityPatch(Minecraft.getInstance().player, PlayerPatch.class);
+            return pp != null && pp.getSkill(GuHaoSkills.GUHAO_PASSIVE) != null && pp.getSkill(GuHaoSkills.GUHAO_PASSIVE).getDataManager().getDataValue(GuHaoSkillDataKeys.SHEATH.get());
+        }
         return false;
     }
-
     @Override
     public boolean hurtEnemy(ItemStack itemstack, LivingEntity entity, LivingEntity sourceentity) {
         boolean retval = super.hurtEnemy(itemstack, entity, sourceentity);

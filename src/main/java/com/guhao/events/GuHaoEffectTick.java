@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.PacketDistributor;
+import reascer.wom.gameasset.WOMAnimations;
 import yesman.epicfight.world.capabilities.EpicFightCapabilities;
 import yesman.epicfight.world.capabilities.entitypatch.player.PlayerPatch;
 
@@ -20,8 +21,10 @@ public class GuHaoEffectTick {
     private static final int SEND_INTERVAL = 30;
 
     public static void execute(LivingEntity entity) {
+        PlayerPatch<?> pp = EpicFightCapabilities.getEntityPatch(entity, PlayerPatch.class);
+        if (pp == null) return;
         // 只在服务端处理
-        if (entity.level().isClientSide() || !entity.getMainHandItem().is(Items.GUHAO.get())) {
+        if (entity.level().isClientSide() || !entity.getMainHandItem().is(Items.GUHAO.get()) || pp.getAnimator().getPlayerFor(null).getAnimation() == WOMAnimations.AGONY_CLAWSTRIKE) {
             return;
         }
 
@@ -38,8 +41,6 @@ public class GuHaoEffectTick {
         // 达到发送间隔，重置计数器
         ENTITY_TICK_COUNTERS.put(entity, 0);
 
-        PlayerPatch<?> pp = EpicFightCapabilities.getEntityPatch(entity, PlayerPatch.class);
-        if (pp == null) return;
 
         Vec3 pos;
         var target = pp.getTarget();

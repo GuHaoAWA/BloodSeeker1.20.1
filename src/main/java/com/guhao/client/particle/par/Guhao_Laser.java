@@ -36,7 +36,7 @@ public class Guhao_Laser extends CustomModelParticle<RawMesh> {
 
     public Guhao_Laser(ClientLevel level, double x, double y, double z, double toX, double toY, double toZ) {
         super(level, x, y, z, 0.0, 0.0, 0.0, Meshes.LASER);
-        this.lifetime = 10;
+        this.lifetime = 11;
         Vec3 direction = new Vec3(toX - x, toY - y, toZ - z);
         Vec3 start = new Vec3(x, y, z);
         Vec3 destination = start.add(direction.normalize().scale(200.0));

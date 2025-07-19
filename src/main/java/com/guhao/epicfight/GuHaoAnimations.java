@@ -32,6 +32,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.PacketDistributor;
 import reascer.wom.animation.attacks.BasicMultipleAttackAnimation;
 import reascer.wom.animation.attacks.SpecialAttackAnimation;
+import reascer.wom.animation.attacks.SpecialAttackNoRotAnimation;
 import reascer.wom.gameasset.WOMWeaponColliders;
 import yesman.epicfight.api.animation.Joint;
 import yesman.epicfight.api.animation.property.AnimationEvent;
@@ -39,6 +40,7 @@ import yesman.epicfight.api.animation.property.AnimationProperty;
 import yesman.epicfight.api.animation.property.MoveCoordFunctions;
 import yesman.epicfight.api.animation.types.*;
 import yesman.epicfight.api.client.animation.property.TrailInfo;
+import yesman.epicfight.api.collider.Collider;
 import yesman.epicfight.api.forgeevent.AnimationRegistryEvent;
 import yesman.epicfight.api.utils.AttackResult;
 import yesman.epicfight.api.utils.TimePairList;
@@ -102,13 +104,13 @@ public class GuHaoAnimations {
     public static StaticAnimation SETTLEMENT;
     public static StaticAnimation HERRSCHER_AUTO_3;
     public static StaticAnimation GUHAO_UCHIGATANA_SHEATHING_AUTO_EX;
+    public static StaticAnimation GUHAO_EX_4;
+    public static StaticAnimation KATANA_AUTO_3;
 
     private static void register() {
         HumanoidArmature biped = Armatures.BIPED;
         Random rand = new Random();
-        float a = 1 + rand.nextFloat(0.25f, 0.85f);
-        float b = 2 + rand.nextFloat(0.25f, 0.85f);
-        float c = 3 + rand.nextFloat(0.05f, 0.45f);
+
         SACRIFICE = (new ActionAnimation(0.1F, 1.851F, "biped/sacrifice", biped))
                 .addProperty(AnimationProperty.ActionAnimationProperty.STOP_MOVEMENT, true)
                 .addProperty(AnimationProperty.ActionAnimationProperty.CANCELABLE_MOVE, false)
@@ -126,10 +128,10 @@ public class GuHaoAnimations {
                         AnimationEvent.TimeStampedEvent.create(0.305F, (ep, anim, objs) -> BattleUtils.Guhao_Battle_utils.blood_burst(ep), AnimationEvent.Side.SERVER),
                 });
         NB_ATTACK = (new AirSlashAnimation(0.1F, 0.15F, 0.386F, 0.55F, BIG_ATTACK, biped.rootJoint, "biped/very_gaint_big_cool_attack", biped))
-                .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, EpicFightParticles.BLADE_RUSH_SKILL)
+                .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, ParticleType.BLOOD_CUT_BIG)
                 .addProperty(AnimationProperty.AttackPhaseProperty.HIT_SOUND, EpicFightSounds.BLADE_RUSH_FINISHER.get())
                 .addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.KNOCKDOWN)
-                .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(c))
+                .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(1.15f))
                 .addProperty(AnimationProperty.ActionAnimationProperty.CANCELABLE_MOVE, true)
                 .addProperty(AnimationProperty.ActionAnimationProperty.STOP_MOVEMENT, true)
                 .addEvents(AnimationEvent.TimeStampedEvent.create(0.46F, Animations.ReusableSources.FRACTURE_GROUND_SIMPLE, AnimationEvent.Side.CLIENT).params(new Vec3f(0.0F, -0.24F, 0f), Armatures.BIPED.toolR, 4.25, 0.45F));
@@ -139,7 +141,7 @@ public class GuHaoAnimations {
                 .addProperty(AnimationProperty.AttackAnimationProperty.BASIS_ATTACK_SPEED, 1.15F)
                 .addProperty(AnimationProperty.AttackAnimationProperty.ATTACK_SPEED_FACTOR, 0.0F)
                 .addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.LONG)
-                .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(b))
+                .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(0.6f))
                 .addProperty(AnimationProperty.AttackPhaseProperty.IMPACT_MODIFIER, ValueModifier.multiplier(2.0f))
                 .addProperty(AnimationProperty.ActionAnimationProperty.RESET_PLAYER_COMBO_COUNTER, true);
         GUHAO_DASH_2 = (new DashAttackAnimation(0.1F, 0.31F,0.31F, 0.44F, 0.70F, null, biped.toolR, "biped/guhao_dash_2", biped))
@@ -147,7 +149,7 @@ public class GuHaoAnimations {
                 .addProperty(AnimationProperty.AttackAnimationProperty.BASIS_ATTACK_SPEED, 1.15F)
                 .addProperty(AnimationProperty.AttackAnimationProperty.ATTACK_SPEED_FACTOR, 0.0F)
                 .addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.LONG)
-                .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(b))
+                .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(0.6f))
                 .addProperty(AnimationProperty.AttackPhaseProperty.IMPACT_MODIFIER, ValueModifier.multiplier(2.0f))
                 .addProperty(AnimationProperty.ActionAnimationProperty.RESET_PLAYER_COMBO_COUNTER, true)
                 .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, (self, entitypatch, speed, prevElapsedTime, elapsedTime) -> 0.66F);
@@ -157,7 +159,7 @@ public class GuHaoAnimations {
                         AnimationEvent.TimeStampedEvent.create(0.381F, (livingEntityPatch, staticAnimation, objects) -> BattleUtils.Guhao_Battle_utils.ender(livingEntityPatch), AnimationEvent.TimeStampedEvent.Side.SERVER)});
         V_GUHAO_SHEATHING_AUTO1 = (new BasicAttackAnimation(0.1F, 0.16F, 0.45F, 0.785F, null, biped.toolR, "biped/auto1", biped)
                 .addProperty(AnimationProperty.AttackPhaseProperty.ARMOR_NEGATION_MODIFIER, ValueModifier.adder(30.0F))
-                .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(b))
+                .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(0.6f))
                 .addProperty(AnimationProperty.AttackPhaseProperty.ARMOR_NEGATION_MODIFIER, ValueModifier.adder(30.0F))
                 .addProperty(AnimationProperty.AttackPhaseProperty.MAX_STRIKES_MODIFIER, ValueModifier.adder(2.0F))
                 .addProperty(AnimationProperty.AttackPhaseProperty.MAX_STRIKES_MODIFIER, ValueModifier.adder(3.0F)));
@@ -166,6 +168,7 @@ public class GuHaoAnimations {
 
                         .addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.KNOCKDOWN)
                         .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND, EpicFightSounds.WHOOSH_SHARP.get())
+                        .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, ParticleType.BLOOD_CUT_BIG)
                         .addProperty(AnimationProperty.ActionAnimationProperty.COORD_SET_BEGIN, MoveCoordFunctions.RAW_COORD)
                         .addProperty(AnimationProperty.ActionAnimationProperty.COORD_SET_TICK, null)
                         .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, Animations.ReusableSources.CONSTANT_ONE)
@@ -318,14 +321,14 @@ public class GuHaoAnimations {
                         .addProperty(AnimationProperty.AttackPhaseProperty.ARMOR_NEGATION_MODIFIER, ValueModifier.adder(24.0F))
                         .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(2.5F))
                         .addProperty(AnimationProperty.AttackPhaseProperty.MAX_STRIKES_MODIFIER, ValueModifier.adder(4.0F))
-
+                        .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND, com.guhao.init.Sounds.DAO1.get())
                         .addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.LONG),
                 new AttackAnimation.Phase(1.20f, 2.85F, 3.174F, 3.2F, Float.MAX_VALUE, biped.rootJoint, GuHaoColliderPreset.GUHAO_BATTOJUTSU_DASH)
                         .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(3.0F))
-
+                        .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, ParticleType.BLOOD_CUT_BIG)
                         .addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.NEUTRALIZE)))
                 .addProperty(AnimationProperty.AttackAnimationProperty.ATTACK_SPEED_FACTOR, 0.0F)
-                .addProperty(AnimationProperty.AttackAnimationProperty.EXTRA_COLLIDERS, 2)
+                .addProperty(AnimationProperty.AttackAnimationProperty.EXTRA_COLLIDERS, 3)
                 .addProperty(AnimationProperty.AttackAnimationProperty.FIXED_MOVE_DISTANCE, true)
                 .addProperty(AnimationProperty.ActionAnimationProperty.CANCELABLE_MOVE, false)
                 .addProperty(AnimationProperty.ActionAnimationProperty.STOP_MOVEMENT, true)
@@ -335,7 +338,7 @@ public class GuHaoAnimations {
 //                        AnimationEvent.TimeStampedEvent.create(0.0F, (ep, anim, objs) -> BattleUtils.Guhao_Battle_utils.blood_judgement_geo(ep), AnimationEvent.Side.BOTH),
                         //AnimationEvent.TimeStampedEvent.create(0f, (ep, anim, objs) -> CameraEvents.SetAnim(BLOOD_JUDGEMENT_C, ep.getOriginal(), true), AnimationEvent.Side.CLIENT),
                         AnimationEvent.TimeStampedEvent.create(0.295F, Animations.ReusableSources.PLAY_SOUND, AnimationEvent.Side.SERVER).params(EpicFightSounds.SWORD_IN.get()),
-                        AnimationEvent.TimeStampedEvent.create(0.412F, (ep, anim, objs) -> BattleUtils.Guhao_Battle_utils.blood_judgement_sound_1(ep), AnimationEvent.Side.SERVER),
+//                        AnimationEvent.TimeStampedEvent.create(0.412F, (ep, anim, objs) -> BattleUtils.Guhao_Battle_utils.blood_judgement_sound_1(ep), AnimationEvent.Side.SERVER),
 //                        AnimationEvent.TimeStampedEvent.create(0.744F, (ep, anim, objs) -> BattleUtils.Guhao_Battle_utils.blood_judgement_post(ep), AnimationEvent.Side.CLIENT),
                         AnimationEvent.TimeStampedEvent.create(0.745F, (ep, anim, objs) -> BattleUtils.Guhao_Battle_utils.blood_judgement_p2(ep), AnimationEvent.Side.BOTH),
                         AnimationEvent.TimeStampedEvent.create(0.795F, (ep, anim, objs) -> BattleUtils.Guhao_Battle_utils.blood_judgement_p2(ep), AnimationEvent.Side.BOTH),
@@ -354,10 +357,13 @@ public class GuHaoAnimations {
                         AnimationEvent.TimeStampedEvent.create(2.21F, (ep, anim, objs) -> BattleUtils.Guhao_Battle_utils.blood_judgement_sound_2(ep), AnimationEvent.Side.SERVER),
                         AnimationEvent.TimeStampedEvent.create(2.46F, (ep, anim, objs) -> BattleUtils.Guhao_Battle_utils.blood_judgement_cut(ep), AnimationEvent.Side.SERVER),
                         AnimationEvent.TimeStampedEvent.create(2.71F, (ep, anim, objs) -> BattleUtils.Guhao_Battle_utils.blood_judgement_cut(ep), AnimationEvent.Side.SERVER),
+                        AnimationEvent.TimeStampedEvent.create(2.9435F, Animations.ReusableSources.FRACTURE_GROUND_SIMPLE, AnimationEvent.Side.CLIENT).params(new Vec3f(0.0F, -0.25F, 0f), Armatures.BIPED.rootJoint, 2.5, 2.0F),
                         AnimationEvent.TimeStampedEvent.create(2.945F, (ep, anim, objs) -> BattleUtils.Guhao_Battle_utils.blood_judgement_sound_3(ep), AnimationEvent.Side.SERVER),
+                        AnimationEvent.TimeStampedEvent.create(2.9455F, (ep, anim, objs) -> BattleUtils.Guhao_Battle_utils.blood_judgement_p3(ep), AnimationEvent.Side.SERVER),
                         AnimationEvent.TimeStampedEvent.create(2.946F, (ep, anim, objs) -> BattleUtils.Guhao_Battle_utils.blood_blade(ep), AnimationEvent.Side.SERVER),
                         AnimationEvent.TimeStampedEvent.create(2.9465F, (ep, anim, objs) -> BattleUtils.Guhao_Battle_utils.blood_needles(ep), AnimationEvent.Side.SERVER),
                         AnimationEvent.TimeStampedEvent.create(2.948F, (ep, anim, objs) -> BattleUtils.Guhao_Battle_utils.blood_judgement_p2(ep), AnimationEvent.Side.CLIENT),
+
 //                        AnimationEvent.TimeStampedEvent.create(3.165F, (ep, anim, objs) -> BattleUtils.Guhao_Battle_utils.blood_judgement_geo2(ep), AnimationEvent.Side.BOTH),
                 })
 //                .addEvents(AnimationProperty.StaticAnimationProperty.TIME_PERIOD_EVENTS, new AnimationEvent.TimePeriodEvent[] {
@@ -390,31 +396,31 @@ public class GuHaoAnimations {
                 .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, BIGSTAR);
 //                .addProperty(ClientAnimationProperties.TRAIL_EFFECT, newTFL(newTF(9F, 10.6F, 100, biped.toolR, InteractionHand.MAIN_HAND)));
         DENG_LONG = (new BasicMultipleAttackAnimation(0.15F, "biped/deng_long", biped,
-                new AttackAnimation.Phase(0.0F, 2.016F, 2.066F, 2.133F, 2.133F, biped.toolR, GuHaoColliderPreset.SACRIFICE_ATTACK)
+                new SpecialAttackNoRotAnimation.Phase(0.0F, 2.016F, 2.066F, 2.133F, 2.133F, biped.toolR, GuHaoColliderPreset.SACRIFICE_ATTACK)
                         .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(0.66F))
-
+                        .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, ParticleType.BLOOD_CUT_BIG)
                         .addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.HOLD),
-                new AttackAnimation.Phase(2.133F, 2.133F, 2.183F, 2.25F, 2.25F, biped.toolR, GuHaoColliderPreset.SACRIFICE_ATTACK)
+                new SpecialAttackNoRotAnimation.Phase(2.133F, 2.133F, 2.183F, 2.25F, 2.25F, biped.toolR, GuHaoColliderPreset.SACRIFICE_ATTACK)
                         .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(0.66F))
                         .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND, EpicFightSounds.WHOOSH_SHARP.get())
                         .addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.HOLD),
-                new AttackAnimation.Phase(2.25F, 2.25F, 2.3F, 2.366F, 2.366F, biped.toolR, GuHaoColliderPreset.SACRIFICE_ATTACK)
+                new SpecialAttackNoRotAnimation.Phase(2.25F, 2.25F, 2.3F, 2.366F, 2.366F, biped.toolR, GuHaoColliderPreset.SACRIFICE_ATTACK)
                         .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(0.66F))
 
                         .addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.HOLD),
-                new AttackAnimation.Phase(2.366F, 2.366F, 2.416F, 2.483F, 2.483F, biped.toolR, GuHaoColliderPreset.SACRIFICE_ATTACK)
+                new SpecialAttackNoRotAnimation.Phase(2.366F, 2.366F, 2.416F, 2.483F, 2.483F, biped.toolR, GuHaoColliderPreset.SACRIFICE_ATTACK)
                         .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(0.66F))
 
                         .addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.HOLD),
-                new AttackAnimation.Phase(2.6F, 2.6F, 2.65F, 2.716F, 2.716F, biped.toolR, GuHaoColliderPreset.SACRIFICE_ATTACK)
+                new SpecialAttackNoRotAnimation.Phase(2.6F, 2.6F, 2.65F, 2.716F, 2.716F, biped.toolR, GuHaoColliderPreset.SACRIFICE_ATTACK)
                         .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(0.66F))
 
                         .addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.HOLD),
-                new AttackAnimation.Phase(2.366F, 2.366F, 2.416F, 2.483F, 2.483F, biped.toolR, GuHaoColliderPreset.SACRIFICE_ATTACK)
+                new SpecialAttackNoRotAnimation.Phase(2.366F, 2.366F, 2.416F, 2.483F, 2.483F, biped.toolR, GuHaoColliderPreset.SACRIFICE_ATTACK)
                         .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(0.66F))
 
                         .addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.HOLD),
-                new AttackAnimation.Phase(2.716F, 2.716F, 2.766F, 2.833F, 3.0F, biped.toolR, GuHaoColliderPreset.SACRIFICE_ATTACK)
+                new SpecialAttackNoRotAnimation.Phase(2.716F, 2.716F, 2.766F, 2.833F, 3.0F, biped.toolR, GuHaoColliderPreset.SACRIFICE_ATTACK)
                         .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(0.66F))
 
                         .addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.HOLD)))
@@ -453,9 +459,9 @@ public class GuHaoAnimations {
                                 serverPlayerPatch.modifyLivingMotionByCurrentItem();
                             }
                         }, AnimationEvent.Side.SERVER));
-        JIANQIE = (new BasicAttackAnimation(0.1F, 0.35F,0.35F, 0.6F, 0.6F, null, biped.toolR, "biped/jianqie", biped)
+        JIANQIE = (new SpecialAttackNoRotAnimation(0.1F, 0.35F,0.35F, 0.6F, 0.6F, null, biped.toolR, "biped/jianqie", biped)
                 .addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.LONG))
-                .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(1.5f))
+                .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(1.05f))
                 .addProperty(AnimationProperty.AttackPhaseProperty.IMPACT_MODIFIER, ValueModifier.multiplier(2.5f))
                 .addProperty(AnimationProperty.AttackAnimationProperty.ATTACK_SPEED_FACTOR, 0.0F)
                 .addProperty(AnimationProperty.AttackAnimationProperty.FIXED_MOVE_DISTANCE, true)
@@ -500,10 +506,12 @@ public class GuHaoAnimations {
                         entitypatch.getOriginal().removeEffect(EpicFightMobEffects.STUN_IMMUNITY.get());
                     }
 
-                }, AnimationEvent.Side.SERVER));
+                }, AnimationEvent.Side.SERVER))
+                .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, JIANQIE_SPEED);;
         HERRSCHER_AUTO_3 = (new BasicMultipleAttackAnimation(0.2F, "biped/herrscher_auto_3", biped, new AttackAnimation.Phase(0.0F, 0.45F, 0.55F, 0.75F, Float.MAX_VALUE, biped.toolR, WOMWeaponColliders.HERSCHER_CHARGE_1))).addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(1.6F)).addProperty(AnimationProperty.AttackPhaseProperty.MAX_STRIKES_MODIFIER, ValueModifier.multiplier(5.0F)).addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.NONE).addProperty(AnimationProperty.AttackAnimationProperty.BASIS_ATTACK_SPEED, 1.6F);
-        SETTLEMENT = (new SpecialAttackAnimation(0.2F, 0.35F, 0.35F, 0.75F, 1.05F, WOMWeaponColliders.FATAL_DRAW_DASH, biped.rootJoint, "biped/settlement", biped))
+        SETTLEMENT = (new SpecialAttackNoRotAnimation(0.2F, 0.35F, 0.35F, 0.75F, 1.05F, WOMWeaponColliders.FATAL_DRAW_DASH, biped.rootJoint, "biped/settlement", biped))
                 .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND, EpicFightSounds.WHOOSH_SHARP.get())
+                .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, ParticleType.BLOOD_CUT_BIG)
                 .addProperty(AnimationProperty.AttackPhaseProperty.IMPACT_MODIFIER, ValueModifier.multiplier(2.0F))
                 .addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.LONG)
                 .addProperty(AnimationProperty.AttackAnimationProperty.BASIS_ATTACK_SPEED, 2.0F)
@@ -563,16 +571,45 @@ public class GuHaoAnimations {
         }, AnimationEvent.Side.SERVER), AnimationEvent.TimeStampedEvent.create(1.9F, (entitypatch, self, params) -> {
             entitypatch.playSound(EpicFightSounds.WHOOSH.get(), 0.0F, 0.0F);
         }, AnimationEvent.Side.SERVER));
-
+        GUHAO_EX_4 = new BasicMultipleAttackAnimation(0.1F, "biped/ex_4", biped,
+                new BasicMultipleAttackAnimation.Phase(0.0F, 0.34F, 0.6F, 0.9F, 0.89F, biped.toolR, GuHaoColliderPreset.LARGER)
+                        .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(1.05F))
+                        .addProperty(AnimationProperty.AttackPhaseProperty.HIT_SOUND, EpicFightSounds.BLADE_RUSH_FINISHER.get())
+                        .addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.LONG),
+                new BasicMultipleAttackAnimation.Phase(0.9F, 0.9F, 1.0F, 1.40F, 1.65F, biped.rootJoint, GuHaoColliderPreset.LARGER)
+                        .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(0.5F))
+                        .addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.HOLD)
+        )
+                .addProperty(AnimationProperty.AttackAnimationProperty.ATTACK_SPEED_FACTOR, 0.0F)
+                .addProperty(AnimationProperty.AttackAnimationProperty.FIXED_MOVE_DISTANCE, true)
+                .addProperty(AnimationProperty.ActionAnimationProperty.NO_GRAVITY_TIME, TimePairList.create(0.0F, 0.6F))
+                .addProperty(AnimationProperty.ActionAnimationProperty.MOVE_VERTICAL, true)
+                .addProperty(AnimationProperty.StaticAnimationProperty.TIME_STAMPED_EVENTS, new AnimationEvent.TimeStampedEvent[] {
+                        AnimationEvent.TimeStampedEvent.create(0.545F, Animations.ReusableSources.FRACTURE_GROUND_SIMPLE, AnimationEvent.Side.SERVER).params(new Vec3f(0.0F, -0.32F, 0.0F), Armatures.BIPED.rootJoint, 2.0, 1.2F),
+                        AnimationEvent.TimeStampedEvent.create(0.98F, Animations.ReusableSources.FRACTURE_GROUND_SIMPLE, AnimationEvent.Side.SERVER).params(new Vec3f(0.0F, -0.32F, 0.0F), Armatures.BIPED.rootJoint, 3.74, 1.5F),
+                        AnimationEvent.TimeStampedEvent.create(0.9F, (ep, anim, objs) -> {
+                            PlayerPatch<?> playerPatch = EpicFightCapabilities.getEntityPatch(ep.getOriginal(), PlayerPatch.class);
+                            ServerPlayerPatch serverPlayerPatch = EpicFightCapabilities.getEntityPatch(ep.getOriginal(), ServerPlayerPatch.class);
+                            if (playerPatch != null && serverPlayerPatch != null && playerPatch.getSkill(GuHaoSkills.GUHAO_PASSIVE) != null) {
+                                playerPatch.playSound(EpicFightSounds.SWORD_IN.get(), 1.25F,1.0F,1.0F);
+                                playerPatch.getSkill(GuHaoSkills.GUHAO_PASSIVE).getDataManager().setDataSync(GuHaoSkillDataKeys.SHEATH.get(), true,serverPlayerPatch.getOriginal());
+                                serverPlayerPatch.modifyLivingMotionByCurrentItem(false);
+                            }
+                        }, AnimationEvent.Side.SERVER),
+                        AnimationEvent.TimeStampedEvent.create(0.99F, (ep, anim, objs) -> BattleUtils.Guhao_Battle_utils.blood_devour(ep), AnimationEvent.Side.SERVER),
+                })
+                .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, EX_4);
+        KATANA_AUTO_3 = (new BasicMultipleAttackAnimation(0.2F, 0.25F, 0.4F, 0.75F, null, biped.toolR, "biped/katana_auto_3", biped)).addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(1.2F)).addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.HOLD).addProperty(AnimationProperty.AttackAnimationProperty.BASIS_ATTACK_SPEED, 1.6F);
     }
 
 
     public static final AnimationProperty.PlaybackSpeedModifier NB = (self, entitypatch, speed, prevElapsedTime, elapsedTime) -> 1.25F;
     public static final AnimationProperty.PlaybackSpeedModifier SC = (self, entitypatch, speed, prevElapsedTime, elapsedTime) -> 0.666F;
     public static final AnimationProperty.PlaybackSpeedModifier DENGLONG = (self, entitypatch, speed, prevElapsedTime, elapsedTime) -> 1.25F;
-    public static final AnimationProperty.PlaybackSpeedModifier BLOOD_BURST_S = (self, entitypatch, speed, prevElapsedTime, elapsedTime) -> 0.75F;
+    public static final AnimationProperty.PlaybackSpeedModifier EX_4 = (self, entitypatch, speed, prevElapsedTime, elapsedTime) -> 0.616F;
     public static final AnimationProperty.PlaybackSpeedModifier BLOOD_JUDGEMENT_SPEED = (self, entitypatch, speed, prevElapsedTime, elapsedTime) -> 1.0F;
     public static final AnimationProperty.PlaybackSpeedModifier BIGSTAR = (self, entitypatch, speed, prevElapsedTime, elapsedTime) -> 0.75F;
+    public static final AnimationProperty.PlaybackSpeedModifier JIANQIE_SPEED = (self, entitypatch, speed, prevElapsedTime, elapsedTime) -> 0.8F;
 
     public static final AnimationEvent.AnimationEventConsumer KATANA_IN = (entitypatch, self, params) -> {
         entitypatch.playSound(EpicFightSounds.SWORD_IN.get(), 0.0F, 0.0F);

@@ -8,6 +8,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Random;
+
 @OnlyIn(Dist.CLIENT)
 public class TwoEyeParticle extends TextureSheetParticle {
     public static EyeParticleProvider provider(SpriteSet spriteSet) {
@@ -38,7 +40,10 @@ public class TwoEyeParticle extends TextureSheetParticle {
         this.lifetime = 7;
         this.gravity = 0f;
         this.hasPhysics = false;
-
+        Random rand = new Random();
+        float angle = (float)Math.toRadians(180.0F + (rand.nextFloat() - 0.5F) * 360.0F);
+        this.oRoll = angle;
+        this.roll = angle;
         this.pickSprite(spriteSet);
 
     }

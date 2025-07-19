@@ -7,6 +7,7 @@ import com.guhao.init.*;
 import io.redspace.ironsspellbooks.api.util.Utils;
 import io.redspace.ironsspellbooks.entity.spells.blood_needle.BloodNeedle;
 import io.redspace.ironsspellbooks.entity.spells.blood_slash.BloodSlashProjectile;
+import io.redspace.ironsspellbooks.entity.spells.devour_jaw.DevourJaw;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -119,6 +120,8 @@ public class BattleUtils {
                 _level.sendParticles(ParticleType.RED_RING.get(), x, y, z, 1, 0.1, 0.1, 0.1, 0);
                 _level.sendParticles(ParticleType.RED_RING.get(), x, y+0.1, z, 1, 0.1, 0.1, 0.1, 0);
                 _level.sendParticles(ParticleType.RED_RING.get(), x, y+0.2, z, 1, 0.1, 0.1, 0.1, 0);
+                _level.sendParticles(ParticleType.CONQUEROR_HAKI.get(), x, y+1.0, z, 1, 0.1, 0.1, 0.1, 0);
+                _level.sendParticles(ParticleType.CONQUEROR_HAKI_FLOOR.get(), x, y+1.0, z, 1, 0.1, 0.1, 0.1, 0);
                 _level.sendParticles(EpicFightParticles.EVISCERATE.get(), x, y+0.45, z, 1, 0, 0, 0, 0);
             }
             livingEntityPatch.getOriginal().clearFire();
@@ -165,10 +168,12 @@ public class BattleUtils {
             double z = vec3.z;
             Level world = ep.getOriginal().level();
             if (world instanceof ServerLevel _level) {
+                for (int i = 0; i < 2; i++) {
                     _level.sendParticles(ParticleType.BLOOD_JUDGEMENT.get(), x + 5, (y + 8), z, 1, 0, 0, 0, 0);
                     _level.sendParticles(ParticleType.BLOOD_JUDGEMENT.get(), x - 5, (y + 8), z, 1, 0, 0, 0, 0);
                     _level.sendParticles(ParticleType.BLOOD_JUDGEMENT.get(), x, (y + 8), z + 5, 1, 0, 0, 0, 0);
                     _level.sendParticles(ParticleType.BLOOD_JUDGEMENT.get(), x, (y + 8), z - 5, 1, 0, 0, 0, 0);
+                }
             }
         }
         public static void blood_judgement_cut(LivingEntityPatch<?> ep) {
@@ -304,12 +309,12 @@ public class BattleUtils {
                     if (entityiterator instanceof LivingEntity livingEntity && livingEntity.hasEffect(new MobEffectInstance(EXSANGUINATION.get()).getEffect()) && !(livingEntity instanceof Player)) {
                         int amplifier = livingEntity.getEffect(new MobEffectInstance(EXSANGUINATION.get()).getEffect()).getAmplifier();
                         if (world instanceof ServerLevel _level) {
-                            Random r = new Random();
                             ArrayUtils.playSound(ep.getOriginal(),Sounds.BLOOD.get(),1.0f,0.85f,1.15f);
 
-                            _level.sendParticles(EpicFightParticles.EVISCERATE.get(), livingEntity.getX(), livingEntity.getY() + 1.2, livingEntity.getZ(), 1, 0.25, 0.25, 0.25, 0);
+                            _level.sendParticles(EpicFightParticles.EVISCERATE.get(), livingEntity.getX(), livingEntity.getY() + 1.15, livingEntity.getZ(), 1, 0.25, 0.25, 0.25, 0);
+                            _level.sendParticles(ParticleType.EYE.get(), livingEntity.getX(), livingEntity.getY() + 1.15, livingEntity.getZ(), 1, 0.25, 0.25, 0.25, 0);
                         }
-                        livingEntity.hurt(new DamageSource(ep.getOriginal().level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.MAGIC), ep.getOriginal()), 12.0f);
+                        livingEntity.hurt(new DamageSource(ep.getOriginal().level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.MAGIC), ep.getOriginal()), (amplifier+1) * 3);
                         livingEntity.removeEffect(EXSANGUINATION.get());
                         //LivingEntityPatch<?> entitypatch = EpicFightCapabilities.getEntityPatch(entityiterator, LivingEntityPatch.class);
                         HurtableEntityPatch<?> hurtableEntityPatch = EpicFightCapabilities.getEntityPatch(entityiterator, HurtableEntityPatch.class);
@@ -394,6 +399,39 @@ public class BattleUtils {
                 entitypatch.getEventListener().removeListener(PlayerEventListener.EventType.HURT_EVENT_PRE, UUID.fromString("f6f8c8d8-6e54-4b02-8f18-7c6f3e6e3f6f"));
             }
         }
-        
+
+        public static void blood_devour(LivingEntityPatch<?> ep) {
+            if (ep.getOriginal().level instanceof ServerLevel world) {
+                Vec3 position = ep.getOriginal().position();
+                double x = position.x;
+                double y = position.y;
+                double z = position.z;
+                world.sendParticles(ParticleType.RED_RING.get(), x, y + 0.3, z, 1, 0.1, 0.1, 0.1, 0);
+                world.sendParticles(ParticleType.CONQUEROR_HAKI_FLOOR.get(), x, y+1.0, z, 1, 0.1, 0.1, 0.1, 0);
+                ep.playSound(ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("item.totem.use")),1.0f,1.0f,1.0f);
+
+            }
+            List<LivingEntity> attackedEntities = ep.getCurrenltyAttackedEntities();
+            if (attackedEntities != null) {
+                for (LivingEntity entity : attackedEntities) {
+                    if (entity != null) {
+                        DevourJaw devour = new DevourJaw(ep.getOriginal().level(), ep.getOriginal(), entity);
+                        devour.setPos(entity.position());
+                        devour.setYRot(ep.getOriginal().getYRot());
+                        devour.setDamage(24);
+                        devour.vigorLevel = 12;
+                        ep.getOriginal().level().addFreshEntity(devour);
+                    }
+                }
+            }
+        }
+
+        public static void blood_judgement_p3(LivingEntityPatch<?> ep) {
+            Entity entity = ep.getOriginal();
+            entity.level().addParticle(ParticleType.ENTITY_AFTER_IMG_BLOOD.get(), entity.getX(), entity.getY(), entity.getZ(), Double.longBitsToDouble(entity.getId()), 0.0, 0.0);
+            if (entity.level() instanceof ServerLevel _level) {
+                _level.sendParticles(ParticleType.CONQUEROR_HAKI.get(), entity.getX(), entity.getY() + 1.0, entity.getZ(), 1, 0.1, 0.1, 0.1, 0);
+            }
+        }
     }
 }

@@ -5,7 +5,9 @@
   "refmap": "guhao.refmap.json",
   "mixins": [
     "EnderPearlMixin",
+    "EntityMixin",
     "MilkMixin",
+
     "ParryMixin",
     "TickProcedureMixin"
   ],

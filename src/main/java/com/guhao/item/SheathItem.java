@@ -1,7 +1,14 @@
 
 package com.guhao.item;
 
+import com.guhao.epicfight.GuHaoSkillDataKeys;
+import com.guhao.epicfight.skills.GuHaoSkills;
 import com.guhao.renderers.SheathItemRenderer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.util.GeckoLibUtil;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.core.animation.RawAnimation;
@@ -17,6 +24,8 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.Item;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import yesman.epicfight.world.capabilities.EpicFightCapabilities;
+import yesman.epicfight.world.capabilities.entitypatch.player.PlayerPatch;
 
 import java.util.function.Consumer;
 
@@ -82,6 +91,15 @@ public class SheathItem extends Item implements GeoItem {
 	public void registerControllers(AnimatableManager.ControllerRegistrar data) {
 		data.add(new AnimationController<>(this, "idle", 0, this::idlePredicate));
 		data.add(new AnimationController<>(this, "procedure", 0, this::procedurePredicate));
+	}
+	@Override
+	@OnlyIn(Dist.CLIENT)
+	public boolean isFoil(@NotNull ItemStack itemstack) {
+		if (Minecraft.getInstance().player != null) {
+			PlayerPatch<?> pp = EpicFightCapabilities.getEntityPatch(Minecraft.getInstance().player, PlayerPatch.class);
+            return pp != null && pp.getSkill(GuHaoSkills.GUHAO_PASSIVE) != null && pp.getSkill(GuHaoSkills.GUHAO_PASSIVE).getDataManager().getDataValue(GuHaoSkillDataKeys.SHEATH.get());
+		}
+		return false;
 	}
 
 	@Override

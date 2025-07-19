@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+import reascer.wom.particle.WOMParticles;
 import yesman.epicfight.particle.HitParticleType;
 
 import static com.guhao.GuhaoMod.MODID;
@@ -22,7 +23,7 @@ public class ParticleType {
     public static final RegistryObject<SimpleParticleType> TRAIL_GUHAO;
     public static final RegistryObject<SimpleParticleType> TRAIL_GUHAO_BLOOM;
     public static final RegistryObject<SimpleParticleType> TRAIL_GUHAO_SPACE;
-    public static final RegistryObject<SimpleParticleType> EYE;
+    public static final RegistryObject<HitParticleType> EYE;
     public static final RegistryObject<SimpleParticleType> TWO_EYE;
     public static final RegistryObject<SimpleParticleType> RING;
     public static final RegistryObject<SimpleParticleType> RED_RING;
@@ -34,6 +35,10 @@ public class ParticleType {
     public static final RegistryObject<SimpleParticleType> ONE_JC_BLOOD_JUDGEMENT_WIDE;
     public static final RegistryObject<SimpleParticleType> ENTITY_AFTER_IMG_BLOOD;
     public static final RegistryObject<SimpleParticleType> GUHAO_LASER;
+    public static final RegistryObject<SimpleParticleType> CONQUEROR_HAKI;
+    public static final RegistryObject<SimpleParticleType> CONQUEROR_HAKI_FLOOR;
+    public static final RegistryObject<HitParticleType> BLOOD_CUT;
+    public static final RegistryObject<HitParticleType> BLOOD_CUT_BIG;
 
     @SubscribeEvent
     public static void RP(RegisterParticleProvidersEvent event) {
@@ -51,6 +56,11 @@ public class ParticleType {
         event.registerSpriteSet(ONE_JC_BLOOD_JUDGEMENT_WIDE.get(), ONEJCBladeTrailWide.Provider::new);
         event.registerSpriteSet(ENTITY_AFTER_IMG_BLOOD.get(), After_Image_BloodParticle.Provider::new);
         event.registerSpriteSet(GUHAO_LASER.get(), Guhao_Laser.Provider::new);
+        event.registerSpriteSet(CONQUEROR_HAKI.get(), ConquerorHakiParticle.Provider::new);
+        event.registerSpriteSet(CONQUEROR_HAKI_FLOOR.get(), ConquerorHakiFloorParticle.Provider::new);
+        event.registerSpriteSet(BLOOD_CUT.get(), BloodCutParticle.Provider::new);
+        event.registerSpriteSet(BLOOD_CUT_BIG.get(), BloodCutBigParticle.Provider::new);
+
     }
 
     public ParticleType() {
@@ -62,6 +72,8 @@ public class ParticleType {
         TRAIL_GUHAO_BLOOM = PARTICLES.register("trail_guhao_bloom", () -> new SimpleParticleType(true));
         TRAIL_GUHAO_SPACE = PARTICLES.register("trail_guhao_space", () -> new SimpleParticleType(true));
         EYE = PARTICLES.register("eye", () -> new HitParticleType(true, HitParticleType.RANDOM_WITHIN_BOUNDING_BOX, HitParticleType.ZERO));
+        BLOOD_CUT = PARTICLES.register("blood_cut", () -> new HitParticleType(true, HitParticleType.RANDOM_WITHIN_BOUNDING_BOX, HitParticleType.ZERO));
+        BLOOD_CUT_BIG = PARTICLES.register("blood_cut_big", () -> new HitParticleType(true, HitParticleType.RANDOM_WITHIN_BOUNDING_BOX, HitParticleType.ZERO));
         RING = PARTICLES.register("ring", () -> new SimpleParticleType(true));
         TWO_EYE = PARTICLES.register("two_eye", () -> new SimpleParticleType(true));
         RED_RING = PARTICLES.register("red_ring", () -> new SimpleParticleType(true));
@@ -73,5 +85,7 @@ public class ParticleType {
         ONE_JC_BLOOD_JUDGEMENT_WIDE = PARTICLES.register("one_jc_blood_judgement_wide", () -> new HitParticleType(true));
         ENTITY_AFTER_IMG_BLOOD = PARTICLES.register("after_image_blood", () -> new SimpleParticleType(true));
         GUHAO_LASER = PARTICLES.register("guhao_laser", () -> new SimpleParticleType(true));
+        CONQUEROR_HAKI = PARTICLES.register("conqueror_haki", () -> new SimpleParticleType(true));
+        CONQUEROR_HAKI_FLOOR = PARTICLES.register("conqueror_haki_particle", () -> new SimpleParticleType(true));
     }
 }

@@ -36,7 +36,6 @@ public class ONEJCBladeTrailWide extends SingleQuadParticle {
         this.xd = rx;
         this.yd = ry;
         this.zd = rz;
-
         rCol = 1.0f;
         gCol = 0.6902f;
         bCol = 0.45f;

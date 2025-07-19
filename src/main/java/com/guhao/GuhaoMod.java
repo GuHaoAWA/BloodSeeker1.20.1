@@ -9,6 +9,7 @@ import com.guhao.init.*;
 import com.guhao.network.GuHaoEffectPacket;
 import com.guhao.network.ParticlePacket;
 import com.mojang.logging.LogUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -49,6 +50,22 @@ public class GuhaoMod {
             () -> NETWORK_PROTOCOL,
             NETWORK_PROTOCOL::equals,
             NETWORK_PROTOCOL::equals
+    );
+    private static final List<ResourceLocation> TEXTURES_TO_PRELOAD = List.of(
+            new ResourceLocation(MODID, "eyes/eye.png"),
+            new ResourceLocation(MODID, "eyes/sky_eye.png"),
+            new ResourceLocation(MODID, "textures/item/bloodslashingblade2.png"),
+            new ResourceLocation(MODID, "textures/item/bloodslashingblade2_ex.png"),
+            new ResourceLocation(MODID, "textures/particle/eye1.png"),
+            new ResourceLocation(MODID, "textures/particle/eye2.png"),
+            new ResourceLocation(MODID, "textures/particle/eye3.png"),
+            new ResourceLocation(MODID, "textures/particle/eye4.png"),
+            new ResourceLocation(MODID, "textures/particle/eye5.png"),
+            new ResourceLocation(MODID, "textures/particle/eye6.png"),
+            new ResourceLocation(MODID, "textures/particle/eye7.png"),
+            new ResourceLocation(MODID, "textures/particle/eye8.png"),
+            new ResourceLocation(MODID, "textures/particle/ring.png"),
+            new ResourceLocation(MODID, "textures/particle/red_ring.png")
     );
     public static final SimpleChannel PACKET_HANDLER = NetworkRegistry.newSimpleChannel(new ResourceLocation(MODID, MODID), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
     private static int messageID = 0;
@@ -93,9 +110,15 @@ public class GuhaoMod {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
+            event.enqueueWork(() -> {
+                Minecraft minecraft = Minecraft.getInstance();
+                for (ResourceLocation texture : TEXTURES_TO_PRELOAD) {
+                    minecraft.getTextureManager().bindForSetup(texture);
+                }
+            });
         }
     }
-    private void setupClient(final FMLClientSetupEvent event){
+    private void setupClient(final FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             // 确保只在物理客户端执行
             if (FMLEnvironment.dist == Dist.CLIENT) {
@@ -113,7 +136,7 @@ public class GuhaoMod {
 
     @SubscribeEvent
     public void setupCommon(FMLCommonSetupEvent event) {
-//        event.enqueueWork(Net::register);
+
     }
 
 
