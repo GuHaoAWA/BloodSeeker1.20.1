@@ -5,9 +5,10 @@
 			"end_pos": [0.0, -0.24, -2.85],
 			"start_time": 0.12,
 			"end_time": 0.50,
-			"lifetime": 20,
+			"lifetime": 40,
 			"joint": "Tool_R",
-			"item_skin_hand": "main_hand"
+			"item_skin_hand": "main_hand",
+			"particle_type": "guhao:stay_trail"
 		}
 	]
 }
