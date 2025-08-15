@@ -11,7 +11,6 @@ import net.minecraft.client.particle.*;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
@@ -58,17 +57,17 @@ public class SpaceTrailParticle extends TextureSheetParticle {
         this.visibleTrailEdges = Lists.newLinkedList();
         this.hasPhysics = false;
         this.trailInfo = trailInfo;
-        Vec3 entityPos = ((LivingEntity)entitypatch.getOriginal()).position();
+        Vec3 entityPos = (entitypatch.getOriginal()).position();
         float size = (float)Math.max(this.trailInfo.start.length(), this.trailInfo.end.length()) * 2.0F;
         this.setSize(size, size);
-        this.move(entityPos.x, entityPos.y + (double)((LivingEntity)entitypatch.getOriginal()).getEyeHeight(), entityPos.z);
+        this.move(entityPos.x, entityPos.y + (entitypatch.getOriginal()).getEyeHeight(), entityPos.z);
         this.setSpriteFromAge(spriteSet);
         Pose prevPose = this.entitypatch.getAnimator().getPose(0.0F);
         Pose middlePose = this.entitypatch.getAnimator().getPose(0.5F);
         Pose currentPose = this.entitypatch.getAnimator().getPose(1.0F);
-        Vec3 posOld = ((LivingEntity)this.entitypatch.getOriginal()).getPosition(0.0F);
-        Vec3 posMid = ((LivingEntity)this.entitypatch.getOriginal()).getPosition(0.5F);
-        Vec3 posCur = ((LivingEntity)this.entitypatch.getOriginal()).getPosition(1.0F);
+        Vec3 posOld = (this.entitypatch.getOriginal()).getPosition(0.0F);
+        Vec3 posMid = (this.entitypatch.getOriginal()).getPosition(0.5F);
+        Vec3 posCur = (this.entitypatch.getOriginal()).getPosition(1.0F);
         OpenMatrix4f prvmodelTf = OpenMatrix4f.createTranslation((float)posOld.x, (float)posOld.y, (float)posOld.z).mulBack(OpenMatrix4f.createRotatorDeg(180.0F, Vec3f.Y_AXIS).mulBack(this.entitypatch.getModelMatrix(0.0F)));
         OpenMatrix4f middleModelTf = OpenMatrix4f.createTranslation((float)posMid.x, (float)posMid.y, (float)posMid.z).mulBack(OpenMatrix4f.createRotatorDeg(180.0F, Vec3f.Y_AXIS).mulBack(this.entitypatch.getModelMatrix(0.5F)));
         OpenMatrix4f curModelTf = OpenMatrix4f.createTranslation((float)posCur.x, (float)posCur.y, (float)posCur.z).mulBack(OpenMatrix4f.createRotatorDeg(180.0F, Vec3f.Y_AXIS).mulBack(this.entitypatch.getModelMatrix(1.0F)));
@@ -93,26 +92,24 @@ public class SpaceTrailParticle extends TextureSheetParticle {
         this.xo = this.x;
         this.yo = this.y;
         this.zo = this.z;
-        if (((LivingEntity)this.entitypatch.getOriginal()).isAlive()) {
-            Vec3 pos = ((LivingEntity)this.entitypatch.getOriginal()).position();
+        if ((this.entitypatch.getOriginal()).isAlive()) {
+            Vec3 pos = (this.entitypatch.getOriginal()).position();
             this.setPos(pos.x, pos.y, pos.z);
         }
 
         AnimationPlayer animPlayer = this.entitypatch.getAnimator().getPlayerFor(this.animation);
-        this.visibleTrailEdges.removeIf((v) -> {
-            return !v.isAlive();
-        });
+        this.visibleTrailEdges.removeIf((v) -> !v.isAlive());
         if (this.animationEnd) {
             if (this.lifetime-- == 0) {
                 this.remove();
             }
-        } else if (!((LivingEntity)this.entitypatch.getOriginal()).isAlive() || this.animation != animPlayer.getAnimation().getRealAnimation() || animPlayer.getElapsedTime() > this.trailInfo.endTime) {
+        } else if (!(this.entitypatch.getOriginal()).isAlive() || this.animation != animPlayer.getAnimation().getRealAnimation() || animPlayer.getElapsedTime() > this.trailInfo.endTime) {
             this.animationEnd = true;
             this.lifetime = this.trailInfo.trailLifetime;
         }
 
         boolean isTrailInvisible = animPlayer.getAnimation() instanceof LinkAnimation || animPlayer.getElapsedTime() <= this.trailInfo.startTime;
-        boolean isFirstTrail = this.visibleTrailEdges.size() == 0;
+        boolean isFirstTrail = this.visibleTrailEdges.isEmpty();
         boolean needCorrection = !isTrailInvisible && isFirstTrail;
         if (needCorrection) {
             float startCorrection = Math.max((this.trailInfo.startTime - animPlayer.getPrevElapsedTime()) / (animPlayer.getElapsedTime() - animPlayer.getPrevElapsedTime()), 0.0F);
@@ -123,9 +120,9 @@ public class SpaceTrailParticle extends TextureSheetParticle {
         Pose prevPose = this.entitypatch.getAnimator().getPose(0.0F);
         Pose middlePose = this.entitypatch.getAnimator().getPose(0.5F);
         Pose currentPose = this.entitypatch.getAnimator().getPose(1.0F);
-        Vec3 posOld = ((LivingEntity)this.entitypatch.getOriginal()).getPosition(0.0F);
-        Vec3 posMid = ((LivingEntity)this.entitypatch.getOriginal()).getPosition(0.5F);
-        Vec3 posCur = ((LivingEntity)this.entitypatch.getOriginal()).getPosition(1.0F);
+        Vec3 posOld = (this.entitypatch.getOriginal()).getPosition(0.0F);
+        Vec3 posMid = (this.entitypatch.getOriginal()).getPosition(0.5F);
+        Vec3 posCur = (this.entitypatch.getOriginal()).getPosition(1.0F);
         OpenMatrix4f prvmodelTf = OpenMatrix4f.createTranslation((float)posOld.x, (float)posOld.y, (float)posOld.z).mulBack(OpenMatrix4f.createRotatorDeg(180.0F, Vec3f.Y_AXIS).mulBack(this.entitypatch.getModelMatrix(0.0F)));
         OpenMatrix4f middleModelTf = OpenMatrix4f.createTranslation((float)posMid.x, (float)posMid.y, (float)posMid.z).mulBack(OpenMatrix4f.createRotatorDeg(180.0F, Vec3f.Y_AXIS).mulBack(this.entitypatch.getModelMatrix(0.5F)));
         OpenMatrix4f curModelTf = OpenMatrix4f.createTranslation((float)posCur.x, (float)posCur.y, (float)posCur.z).mulBack(OpenMatrix4f.createRotatorDeg(180.0F, Vec3f.Y_AXIS).mulBack(this.entitypatch.getModelMatrix(1.0F)));
@@ -157,11 +154,11 @@ public class SpaceTrailParticle extends TextureSheetParticle {
             SpaceTrailParticle.TrailEdge edge2;
             if (isFirstTrail) {
                 int lastIdx = this.invisibleTrailEdges.size() - 1;
-                edge1 = (SpaceTrailParticle.TrailEdge)this.invisibleTrailEdges.get(lastIdx);
+                edge1 = this.invisibleTrailEdges.get(lastIdx);
                 edge2 = new SpaceTrailParticle.TrailEdge(prevStartPos, prevEndPos, -1);
             } else {
-                edge1 = (SpaceTrailParticle.TrailEdge)this.visibleTrailEdges.get(this.visibleTrailEdges.size() - (this.trailInfo.interpolateCount / 2 + 1));
-                edge2 = (SpaceTrailParticle.TrailEdge)this.visibleTrailEdges.get(this.visibleTrailEdges.size() - 1);
+                edge1 = this.visibleTrailEdges.get(this.visibleTrailEdges.size() - (this.trailInfo.interpolateCount / 2 + 1));
+                edge2 = this.visibleTrailEdges.get(this.visibleTrailEdges.size() - 1);
                 ++edge2.lifetime;
             }
 
@@ -185,10 +182,10 @@ public class SpaceTrailParticle extends TextureSheetParticle {
 
         this.makeTrailEdges((List)finalStartPositions, (List)finalEndPositions, visibleTrail ? this.visibleTrailEdges : this.invisibleTrailEdges);
     }
-
+    @Override
     public void render(@NotNull VertexConsumer vertexConsumer, @NotNull Camera camera, float partialTick) {
         if (!this.visibleTrailEdges.isEmpty()) {
-            if (PostEffectPipelines.isActive() && ((LivingEntity)this.entitypatch.getOriginal()).isAlive()) {
+            if (PostEffectPipelines.isActive() && (this.entitypatch.getOriginal()).isAlive()) {
                 PoseStack poseStack = new PoseStack();
                 int light = 15728880;
                 this.setupPoseStack(poseStack, camera, partialTick);
@@ -209,8 +206,8 @@ public class SpaceTrailParticle extends TextureSheetParticle {
                 float to = -partialStartEdge + interval;
 
                 for(int i = (int)startEdge; i < (int)endEdge + 1; ++i) {
-                    SpaceTrailParticle.TrailEdge e1 = (SpaceTrailParticle.TrailEdge)this.visibleTrailEdges.get(i);
-                    SpaceTrailParticle.TrailEdge e2 = (SpaceTrailParticle.TrailEdge)this.visibleTrailEdges.get(i + 1);
+                    SpaceTrailParticle.TrailEdge e1 = this.visibleTrailEdges.get(i);
+                    SpaceTrailParticle.TrailEdge e2 = this.visibleTrailEdges.get(i + 1);
                     Vector4f pos1 = new Vector4f((float)e1.start.x, (float)e1.start.y, (float)e1.start.z, 1.0F);
                     Vector4f pos2 = new Vector4f((float)e1.end.x, (float)e1.end.y, (float)e1.end.z, 1.0F);
                     Vector4f pos3 = new Vector4f((float)e2.end.x, (float)e2.end.y, (float)e2.end.z, 1.0F);
@@ -223,10 +220,10 @@ public class SpaceTrailParticle extends TextureSheetParticle {
                     float alphaTo = Mth.clamp(Mth.clamp(to, 0.0F, 1.0F) * this.alpha * fading, 0.0F, 1.0F);
                     alphaFrom = Mth.sqrt(alphaFrom);
                     alphaTo = Mth.sqrt(alphaTo);
-                    vertexConsumer.vertex((double)pos1.x(), (double)pos1.y(), (double)pos1.z()).color(this.rCol, this.gCol, this.bCol, alphaFrom).uv(from, 1.0F).uv2(light).endVertex();
-                    vertexConsumer.vertex((double)pos2.x(), (double)pos2.y(), (double)pos2.z()).color(this.rCol, this.gCol, this.bCol, alphaFrom).uv(from, 0.0F).uv2(light).endVertex();
-                    vertexConsumer.vertex((double)pos3.x(), (double)pos3.y(), (double)pos3.z()).color(this.rCol, this.gCol, this.bCol, alphaTo).uv(to, 0.0F).uv2(light).endVertex();
-                    vertexConsumer.vertex((double)pos4.x(), (double)pos4.y(), (double)pos4.z()).color(this.rCol, this.gCol, this.bCol, alphaTo).uv(to, 1.0F).uv2(light).endVertex();
+                    vertexConsumer.vertex(pos1.x(), pos1.y(), pos1.z()).color(this.rCol, this.gCol, this.bCol, alphaFrom).uv(from, 1.0F).uv2(light).endVertex();
+                    vertexConsumer.vertex(pos2.x(), pos2.y(), pos2.z()).color(this.rCol, this.gCol, this.bCol, alphaFrom).uv(from, 0.0F).uv2(light).endVertex();
+                    vertexConsumer.vertex(pos3.x(), pos3.y(), pos3.z()).color(this.rCol, this.gCol, this.bCol, alphaTo).uv(to, 0.0F).uv2(light).endVertex();
+                    vertexConsumer.vertex(pos4.x(), pos4.y(), pos4.z()).color(this.rCol, this.gCol, this.bCol, alphaTo).uv(to, 1.0F).uv2(light).endVertex();
                     from += interval;
                     to += interval;
                 }
@@ -253,12 +250,12 @@ public class SpaceTrailParticle extends TextureSheetParticle {
 
     private void makeTrailEdges(List<Vec3> startPositions, List<Vec3> endPositions, List<SpaceTrailParticle.TrailEdge> dest) {
         for(int i = 0; i < startPositions.size(); ++i) {
-            dest.add(new SpaceTrailParticle.TrailEdge((Vec3)startPositions.get(i), (Vec3)endPositions.get(i), this.trailInfo.trailLifetime));
+            dest.add(new SpaceTrailParticle.TrailEdge(startPositions.get(i), endPositions.get(i), this.trailInfo.trailLifetime));
         }
 
     }
 
-    private static class TrailEdge {
+    public static class TrailEdge {
         final Vec3 start;
         final Vec3 end;
         int lifetime;
@@ -282,19 +279,19 @@ public class SpaceTrailParticle extends TextureSheetParticle {
             this.spriteSet = spriteSet;
         }
 
-        public Particle createParticle(SimpleParticleType typeIn, ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+        public Particle createParticle(@NotNull SimpleParticleType typeIn, ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
             int eid = (int)Double.doubleToRawLongBits(x);
             int animid = (int)Double.doubleToRawLongBits(z);
             int jointId = (int)Double.doubleToRawLongBits(xSpeed);
             int idx = (int)Double.doubleToRawLongBits(ySpeed);
             Entity entity = level.getEntity(eid);
             if (entity != null) {
-                LivingEntityPatch<?> entitypatch = (LivingEntityPatch) EpicFightCapabilities.getEntityPatch(entity, LivingEntityPatch.class);
+                LivingEntityPatch<?> entitypatch = (LivingEntityPatch<?>) EpicFightCapabilities.getEntityPatch(entity, LivingEntityPatch.class);
                 StaticAnimation animation = AnimationManager.getInstance().byId(animid);
                 Optional<List<TrailInfo>> trailInfo = animation.getProperty(ClientAnimationProperties.TRAIL_EFFECT);
                 TrailInfo result = (TrailInfo)((List)trailInfo.get()).get(idx);
                 if (result.hand != null) {
-                    ItemStack stack = ((LivingEntity)entitypatch.getOriginal()).getItemInHand(result.hand);
+                    ItemStack stack = (entitypatch.getOriginal()).getItemInHand(result.hand);
                     ItemSkin itemSkin = ItemSkins.getItemSkin(stack.getItem());
                     if (itemSkin != null) {
                         result = itemSkin.trailInfo().overwrite(result);

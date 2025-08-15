@@ -43,15 +43,42 @@
     "sounds": [
       {
         "name": "guhao:blood",
-        "stream": false
+        "stream": true
+      },
+      {
+        "name": "guhao:blood_burst2",
+        "stream": true
       }
     ]
   },
+
   "charge": {
     "sounds": [
       {
         "name": "guhao:charge",
         "stream": true
+      }
+    ]
+  },
+  "blood_hit_cut": {
+    "category":"entity",
+    "subtitle":"entity.hit.blood",
+    "sounds": [
+      {
+        "name": "guhao:hit_cut1",
+        "stream": false
+      },
+      {
+        "name": "guhao:hit_cut2",
+        "stream": false
+      },
+      {
+        "name": "guhao:hit_cut3",
+        "stream": false
+      },
+      {
+        "name": "guhao:hit_cut4",
+        "stream": false
       }
     ]
   }

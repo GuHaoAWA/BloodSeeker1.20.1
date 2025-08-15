@@ -72,7 +72,7 @@ public class HitEvent {
                     LivingEntityPatch<?> entitypatch = EpicFightCapabilities.getEntityPatch(entity, LivingEntityPatch.class);
                     if (entitypatch != null && entity.isAlive()) entitypatch.applyStun(StunType.HOLD, 5.0f);
 
-                    entity.hurt(new DamageSource(world.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.MAGIC), player1), random.nextFloat(25.0F, 36.0F));
+                    entity.hurt(new DamageSource(world.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.MAGIC), player1), random.nextFloat(16.0F, 24.0F));
                 }
             });
         
@@ -89,16 +89,17 @@ public class HitEvent {
                                     _level.sendParticles(ParticleType.TWO_EYE.get(), entityiterator.getX(), entityiterator.getY()+1, entityiterator.getZ(), 1, 0.5, 0.5, 0.5, 0);
                                 }
                                 player1.setHealth(player1.getHealth() + 1.0F);
-                                entity.hurt(new DamageSource(world.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.MAGIC), player1), 7.5F);
+                                if (entityiterator != entity) {
+                                    entityiterator.hurt(new DamageSource(world.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.MAGIC), player1), 6.0F);
+                                }
                             }
                         }
                     }
                         GuhaoMod.queueServerWork(14,() -> {
-                            entity.hurt(new DamageSource(world.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.MAGIC), player1), 7.5F);
+                            entity.hurt(new DamageSource(world.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.MAGIC), player1), 6.0F);
                             LivingEntityPatch<?> entitypatch = EpicFightCapabilities.getEntityPatch(entity, LivingEntityPatch.class);
                             if (entitypatch != null && entity.isAlive()) entitypatch.applyStun(StunType.HOLD, 3.0f);
                             if (world instanceof ServerLevel _level) {
-                                Random r = new Random();
                                 _level.sendParticles(ParticleType.ONE_JC_BLOOD_JUDGEMENT.get(), x, y, z, 1, 0.15, 0, 0.15, 0);
                                 playSound(entity,Sounds.BIU.get(),1.0f,0.75f,1.25f);
                             }
@@ -106,11 +107,10 @@ public class HitEvent {
                                 GuhaoMod.queueServerWork(10, () -> {
                                     if (entitypatch != null && entity.isAlive()) entitypatch.applyStun(StunType.HOLD, 3.0f);
                                     if (world instanceof ServerLevel _level) {
-                                        Random r = new Random();
                                         _level.sendParticles(ParticleType.ONE_JC_BLOOD_JUDGEMENT.get(), x, y, z, 1, 0.15, 0, 0.15, 0);
                                         playSound(entity,Sounds.BIU.get(),1.0f,0.75f,1.25f);
                                     }
-                                    entity.hurt(new DamageSource(world.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.MAGIC), player1), 7.5F);
+                                    entity.hurt(new DamageSource(world.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.MAGIC), player1), 6.0F);
                                 });
                         });
                 });

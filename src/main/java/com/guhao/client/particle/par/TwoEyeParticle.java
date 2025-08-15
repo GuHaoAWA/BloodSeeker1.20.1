@@ -34,7 +34,7 @@ public class TwoEyeParticle extends TextureSheetParticle {
     protected TwoEyeParticle(ClientLevel world, double x, double y, double z, double vx, double vy, double vz, SpriteSet spriteSet) {
         super(world, x, y, z);
         this.spriteSet = spriteSet;
-
+        this.alpha = 0.5f;
         this.setSize(0f, 0f);
         this.quadSize *= 1.1f;
         this.lifetime = 7;

@@ -6,6 +6,7 @@ import com.guhao.epicfight.GuHaoAnimations;
 import com.guhao.epicfight.GuHaoSkillDataKeys;
 import com.guhao.epicfight.skills.GuHaoSkills;
 import com.guhao.init.ParticleType;
+import com.guhao.init.Sounds;
 import com.mojang.logging.LogUtils;
 import net.corruptdog.cdm.gameasset.CorruptAnimations;
 import net.minecraft.resources.ResourceLocation;
@@ -37,7 +38,7 @@ public class GuHaoCapability {
                 return CapabilityItem.Styles.TWO_HAND;
             })
             .passiveSkill(GuHaoSkills.GUHAO_PASSIVE)
-            .hitSound(EpicFightSounds.BLADE_HIT.get())
+            .hitSound(Sounds.BLOOD_HIT_CUT.get())
             .hitParticle(ParticleType.BLOOD_CUT.get())
             .collider(GuHaoColliderPreset.GUHAO)
             .canBePlacedOffhand(false)

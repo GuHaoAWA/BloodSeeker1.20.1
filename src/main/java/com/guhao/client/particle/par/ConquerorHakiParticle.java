@@ -54,7 +54,7 @@ public class ConquerorHakiParticle extends TexturedCustomModelParticle {
     public void render(@NotNull VertexConsumer vertexBuffer, Camera camera, float pt) {
         super.render(vertexBuffer,camera,pt);
         this.yaw += 0.5F;
-        this.scale += (float)Math.max(30 - this.age, 0) * 1.005F;
+        this.scale += (float)Math.max(30 - this.age, 0) * 0.85F;
         this.alpha = (float)(this.lifetime - this.age) / (float)this.lifetime * 2.0F;
         if (this.caster != null && this.caster.getStunShield() <= 0.0F) {
             this.remove();

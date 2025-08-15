@@ -28,6 +28,7 @@ public class Sounds {
     public static final RegistryObject<SoundEvent> BIU = registerSoundEvent("biu");
     public static final RegistryObject<SoundEvent> BLOOD = registerSoundEvent("blood");
     public static final RegistryObject<SoundEvent> CHARGE = registerSoundEvent("charge");
+    public static final RegistryObject<SoundEvent> BLOOD_HIT_CUT = registerSoundEvent("blood_hit_cut");
 
     public Sounds() {
     }

@@ -48,7 +48,7 @@ public class GUHAO extends WeaponItem implements GeoItem {
             }
 
             public float getAttackDamageBonus() {
-                return 22f;
+                return 15f;
             }
 
             public int getLevel() {
@@ -79,12 +79,12 @@ public class GUHAO extends WeaponItem implements GeoItem {
     }
 
     public void getTransformType(ItemDisplayContext type) {
-        this.transformType = type;
+        transformType = type;
     }
 
 
     private PlayState idlePredicate(AnimationState event) {
-        if (this.transformType != null ? true : false) {
+        if (transformType != null) {
             if (this.animationprocedure.equals("empty")) {
                 event.getController().setAnimation(RawAnimation.begin().thenLoop("0"));
                 return PlayState.CONTINUE;
@@ -96,7 +96,7 @@ public class GUHAO extends WeaponItem implements GeoItem {
     String prevAnim = "empty";
 
     private PlayState procedurePredicate(AnimationState event) {
-        if (this.transformType != null ? true : false) {
+        if (transformType != null) {
             if (!this.animationprocedure.equals("empty") && event.getController().getAnimationState() == AnimationController.State.STOPPED || (!this.animationprocedure.equals(prevAnim) && !this.animationprocedure.equals("empty"))) {
                 if (!this.animationprocedure.equals(prevAnim))
                     event.getController().forceAnimationReset();
@@ -128,7 +128,7 @@ public class GUHAO extends WeaponItem implements GeoItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack itemstack, Level world, List<Component> list, TooltipFlag flag) {
+    public void appendHoverText(@NotNull ItemStack itemstack, Level world, @NotNull List<Component> list, @NotNull TooltipFlag flag) {
         super.appendHoverText(itemstack, world, list, flag);
         list.add(Component.literal("\u00A74\u00A7k6666666666guhao6666666666666"));
         list.add(Component.literal("\u00A7c消散于迷雾之中吧..."));
@@ -149,7 +149,7 @@ public class GUHAO extends WeaponItem implements GeoItem {
         return false;
     }
     @Override
-    public boolean hurtEnemy(ItemStack itemstack, LivingEntity entity, LivingEntity sourceentity) {
+    public boolean hurtEnemy(@NotNull ItemStack itemstack, @NotNull LivingEntity entity, @NotNull LivingEntity sourceentity) {
         boolean retval = super.hurtEnemy(itemstack, entity, sourceentity);
         HitEvent.execute(entity.level(), entity.getX(), entity.getY(), entity.getZ(), entity, sourceentity);
         return retval;

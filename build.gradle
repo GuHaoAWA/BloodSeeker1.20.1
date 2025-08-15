@@ -16,7 +16,7 @@ version = '1.20.1-1.0'
 group = 'com.guhao'
 
 base {
-    archivesName =  'GuHao'+ "1.20.1-1.0"+ "" + System.currentTimeSeconds()
+    archivesName =  'BLOODSEEKER'+ "1.20.1-1.0"+ "" + System.currentTimeSeconds()
 }
 
 // Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
@@ -186,6 +186,7 @@ dependencies {
     implementation("com.eliotlash.mclib:mclib:20")
 
     implementation fg.deobf("libs:Stars1.20.1-1.01752629551-1.20.1-1.0:1.0")
+    implementation fg.deobf("libs:SmartKeyPrompts-1.20.1-forge-1.1.0-all:1.0")
     // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")

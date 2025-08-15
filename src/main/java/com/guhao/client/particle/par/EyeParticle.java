@@ -41,6 +41,7 @@ public class EyeParticle extends HitParticle {
         this.setSize(0f, 0f);
         this.quadSize *= 2.25f;
         this.lifetime = 7;
+        this.alpha = 0.5f;
         this.gravity = 0f;
         this.hasPhysics = false;
         Random rand = new Random();

@@ -4,6 +4,7 @@ import com.guhao.GuhaoMod;
 import com.guhao.network.BloodBurstMessage;
 import com.guhao.network.EnderMessage;
 import com.guhao.network.RedFistMessage;
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
@@ -57,7 +58,7 @@ public class Key {
             isDownOld = isDown;
         }
     };
-    public static final KeyMapping RIGHT = new KeyMapping("key.guhao.shift", GLFW.GLFW_MOUSE_BUTTON_2, "key.categories.guhao") {
+    public static final KeyMapping RIGHT = new KeyMapping("key.guhao.shift", InputConstants.Type.MOUSE, 1, "key.categories.guhao") {
         private boolean isDownOld = false;
         @Override
         public void setDown(boolean isDown) {
@@ -65,7 +66,7 @@ public class Key {
             isDownOld = isDown;
         }
     };
-    public static final KeyMapping RED_FIST = new KeyMapping("key.guhao.red_fist", GLFW.GLFW_KEY_ESCAPE, "key.categories.guhao") {
+    public static final KeyMapping RED_FIST = new KeyMapping("key.guhao.red_fist", InputConstants.Type.MOUSE, 3, "key.categories.guhao") {
         private boolean isDownOld = false;
 
         @Override

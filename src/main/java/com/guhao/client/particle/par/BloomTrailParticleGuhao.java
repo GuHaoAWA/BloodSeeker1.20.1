@@ -7,6 +7,7 @@ import com.guhao.init.ParticleType;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -41,6 +42,8 @@ import yesman.epicfight.world.capabilities.entitypatch.LivingEntityPatch;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 @OnlyIn(Dist.CLIENT)
 public class BloomTrailParticleGuhao extends TextureSheetParticle {
@@ -498,6 +501,7 @@ public @NotNull ParticleRenderType getRenderType() {
                     result = itemSkin.trailInfo().overwrite(result);
                 }
             }
+
             Particle spaceTrail = new SpaceTrailParticle(level, entitypatch,
                     entitypatch.getArmature().searchJointById(jointId),
                     animation, result, this.spriteSet);
@@ -506,6 +510,19 @@ public @NotNull ParticleRenderType getRenderType() {
                     entitypatch.getArmature().searchJointById(jointId),
                     animation, result, this.spriteSet);
 //            if (random.nextBoolean()) return bloomTrail;
+            Minecraft.getInstance().submit(() -> CompletableFuture.delayedExecutor((666L), TimeUnit.MILLISECONDS)
+                    .execute(() -> {
+                        if (entity.isAlive()) {
+                            level.addParticle(ParticleType.TRAIL_GUHAO_SPACE.get(),
+                                    Double.longBitsToDouble(eid),
+                                    0,
+                                    Double.longBitsToDouble(animid),
+                                    Double.longBitsToDouble(jointId),
+                                    Double.longBitsToDouble(idx),
+                                    0);
+                        }
+                    }));
+
             return bloomTrail;
 
 

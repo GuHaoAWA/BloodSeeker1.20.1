@@ -19,12 +19,13 @@ import com.mojang.math.Axis;
 @Mod.EventBusSubscriber({Dist.CLIENT})
 public class SkyEyeRenderer {
     private static final ResourceLocation EYE_TEXTURE = new ResourceLocation("guhao:eyes/sky_eye.png");
-    private static final float EYE_SIZE = 800.0F;
-    private static final float EYE_HEIGHT = 300.0F;
+    private static final float EYE_SIZE = 900.0F;
+    private static final float EYE_HEIGHT = 320.0F;
     private static final float BLINK_DURATION = 100; // ms
     private static final float MIN_BLINK_INTERVAL = 3000; // ms
-    private static final float MAX_BLINK_INTERVAL = 8000; // ms
-    public static boolean isOpen = false;
+    private static final float MAX_BLINK_INTERVAL = 6000; // ms
+
+    public volatile static boolean isOpen = false;
 
     private static float blinkProgress = 0;
     private static boolean isBlinking = false;
@@ -51,7 +52,7 @@ public class SkyEyeRenderer {
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, EYE_TEXTURE);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.96F);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.texParameter(3553, 10242, 33071);
         RenderSystem.texParameter(3553, 10243, 33071);
         RenderSystem.texParameter(3553, 10240, 9729);

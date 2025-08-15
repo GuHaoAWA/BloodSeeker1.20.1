@@ -36,9 +36,13 @@ public class ParticleType {
     public static final RegistryObject<SimpleParticleType> ENTITY_AFTER_IMG_BLOOD;
     public static final RegistryObject<SimpleParticleType> GUHAO_LASER;
     public static final RegistryObject<SimpleParticleType> CONQUEROR_HAKI;
+    public static final RegistryObject<SimpleParticleType> Y_CONQUEROR_HAKI;
+    public static final RegistryObject<SimpleParticleType> SPACE_CONQUEROR_HAKI;
     public static final RegistryObject<SimpleParticleType> CONQUEROR_HAKI_FLOOR;
+    public static final RegistryObject<SimpleParticleType> Y_CONQUEROR_HAKI_FLOOR;
     public static final RegistryObject<HitParticleType> BLOOD_CUT;
     public static final RegistryObject<HitParticleType> BLOOD_CUT_BIG;
+    public static final RegistryObject<SimpleParticleType> STAY_TRAIL;
 
     @SubscribeEvent
     public static void RP(RegisterParticleProvidersEvent event) {
@@ -57,9 +61,13 @@ public class ParticleType {
         event.registerSpriteSet(ENTITY_AFTER_IMG_BLOOD.get(), After_Image_BloodParticle.Provider::new);
         event.registerSpriteSet(GUHAO_LASER.get(), Guhao_Laser.Provider::new);
         event.registerSpriteSet(CONQUEROR_HAKI.get(), ConquerorHakiParticle.Provider::new);
+        event.registerSpriteSet(Y_CONQUEROR_HAKI.get(), Y_ConquerorHakiParticle.Provider::new);
+        event.registerSpriteSet(SPACE_CONQUEROR_HAKI.get(), SpaceConquerorHakiParticle.Provider::new);
         event.registerSpriteSet(CONQUEROR_HAKI_FLOOR.get(), ConquerorHakiFloorParticle.Provider::new);
+        event.registerSpriteSet(Y_CONQUEROR_HAKI_FLOOR.get(), Y_ConquerorHakiFloorParticle.Provider::new);
         event.registerSpriteSet(BLOOD_CUT.get(), BloodCutParticle.Provider::new);
         event.registerSpriteSet(BLOOD_CUT_BIG.get(), BloodCutBigParticle.Provider::new);
+        event.registerSpriteSet(STAY_TRAIL.get(), StayTrailParticle.Provider::new);
 
     }
 
@@ -86,6 +94,10 @@ public class ParticleType {
         ENTITY_AFTER_IMG_BLOOD = PARTICLES.register("after_image_blood", () -> new SimpleParticleType(true));
         GUHAO_LASER = PARTICLES.register("guhao_laser", () -> new SimpleParticleType(true));
         CONQUEROR_HAKI = PARTICLES.register("conqueror_haki", () -> new SimpleParticleType(true));
+        Y_CONQUEROR_HAKI = PARTICLES.register("y_conqueror_haki", () -> new SimpleParticleType(true));
+        SPACE_CONQUEROR_HAKI = PARTICLES.register("space_conqueror_haki", () -> new SimpleParticleType(true));
         CONQUEROR_HAKI_FLOOR = PARTICLES.register("conqueror_haki_particle", () -> new SimpleParticleType(true));
+        Y_CONQUEROR_HAKI_FLOOR = PARTICLES.register("y_conqueror_haki_particle", () -> new SimpleParticleType(true));
+        STAY_TRAIL = PARTICLES.register("stay_trail", () -> new SimpleParticleType(true));
     }
 }

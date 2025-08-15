@@ -31,7 +31,7 @@ public class TickProcedureMixin {
         Level l = entityPatch.getOriginal().level();
         RandomSource r = l.random;
         if (entityPatch.getOriginal().getMainHandItem().getItem() == Items.GUHAO.get() && particle == TacticalImbuementsModParticleTypes.FLAME_PARTICLE.get()) {
-            if (r.nextDouble() < 0.5) {
+            if (r.nextDouble() < 0.75) {
                 particle = ParticleType.BLOOD_FIRE_FLAME2.get();
             } else {
                 particle = ParticleType.BLOOD_FIRE_FLAME.get();

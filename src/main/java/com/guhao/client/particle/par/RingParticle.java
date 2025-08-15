@@ -45,17 +45,17 @@ public class RingParticle extends TextureSheetParticleN {
         this.setSize(0f, 0f);
         this.quadSize = 4.05f;
 
-        this.lifetime = 1;
+        this.lifetime = 2;
 
         this.gravity = 0f;
         this.hasPhysics = false;
-
 
         this.setSpriteFromAge(spriteSet);
     }
     @Override
     public void render(@NotNull VertexConsumer vertexBuffer, Camera camera, float pt) {
         super.render(vertexBuffer, camera, pt);
+
         long currentTime = System.nanoTime();
         long elapsedTime = currentTime - startTime;
         if (elapsedTime >= TimeUnit.MILLISECONDS.toNanos(0)) {
@@ -69,19 +69,6 @@ public class RingParticle extends TextureSheetParticleN {
         float f1 = (float)(Mth.lerp((double)pt, this.yo, this.y) - vec3.y());
         float f2 = (float)(Mth.lerp((double)pt, this.zo, this.z) - vec3.z());
 
-        // Commented out the rotation related code
-        // Quaternion quaternion;
-        // if (this.roll == 0.0F) {
-        //    quaternion = camera.rotation();
-        // } else {
-        //    quaternion = new Quaternion(camera.rotation());
-        //    float f3 = Mth.lerp(pt, this.oRoll, this.roll);
-        //    quaternion.mul(Vector3f.ZP.rotation(f3));
-        // }
-
-        // Commented out the transformed vector
-        // Vector3f vector3f1 = new Vector3f(-1.0F, -1.0F, 0.0F);
-        // vector3f1.transform(quaternion);
 
         Vector3f[] avector3f = new Vector3f[]{
                 new Vector3f(-1.0F, 0F, -1.0F),
@@ -93,8 +80,6 @@ public class RingParticle extends TextureSheetParticleN {
 
         for(int i = 0; i < 4; ++i) {
             Vector3f vector3f = avector3f[i];
-            // Removed the transformation and translation related to the rotation
-            // vector3f.transform(quaternion);
             vector3f.mul(f4);
             vector3f.add(f, f1, f2);
 
@@ -137,7 +122,12 @@ public class RingParticle extends TextureSheetParticleN {
     @Override
     public void tick() {
         super.tick();
-        remove();
+        if (this.age < this.lifetime) {
+            this.roll = (this.roll + 5.0F) % 360.0F; // 假设每帧增加5度
+            this.oRoll = this.roll;
+        } else {
+            this.remove();
+        }
     }
 
 }

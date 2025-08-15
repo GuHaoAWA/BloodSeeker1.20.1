@@ -8,12 +8,13 @@ import com.guhao.epicfight.GuHaoSkillDataKeys;
 import com.guhao.init.*;
 import com.guhao.network.GuHaoEffectPacket;
 import com.guhao.network.ParticlePacket;
+import com.guhao.network.SkyEyeStatePacket;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -27,6 +28,7 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.util.thread.SidedThreadGroups;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 import org.slf4j.Logger;
 
@@ -98,6 +100,14 @@ public class GuhaoMod {
                 GuHaoEffectPacket::decode,
                 GuHaoEffectPacket::handle
         );
+        NETWORK_CHANNEL.registerMessage(
+                packetId++,
+                SkyEyeStatePacket.class,
+                SkyEyeStatePacket::encode,
+                SkyEyeStatePacket::decode,
+                SkyEyeStatePacket::handle
+        );
+
 
         MinecraftForge.EVENT_BUS.register(SkyEyeRenderer.class);
     }
@@ -129,8 +139,7 @@ public class GuhaoMod {
         try {
             Config.Load(false);
         } catch (Exception var3) {
-            Exception e = var3;
-            throw new RuntimeException(e);
+            throw new RuntimeException(var3);
         }
     }
 
@@ -147,29 +156,34 @@ public class GuhaoMod {
             workQueue.add(new AbstractMap.SimpleEntry<>(action, tick));
     }
 
+    private boolean lastState = false;
+
     @SubscribeEvent
     public void tick(TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
+                boolean currentState = false;
+                for (ServerPlayer player : event.getServer().getPlayerList().getPlayers()) {
+                    ItemStack mainHand = player.getMainHandItem();
+                    boolean hasEffect = player.hasEffect(Effect.GUHAO.get());
+                    if (mainHand.is(Items.GUHAO.get())&& hasEffect) {
+                        currentState = true;
+                        break;
+                    }
+                }
+                if (currentState != lastState) {
+                    lastState = currentState;
+                    NETWORK_CHANNEL.send(
+                            PacketDistributor.ALL.noArg(),
+                            new SkyEyeStatePacket(currentState)
+                    );
+                }
+            }
             List<AbstractMap.SimpleEntry<Runnable, Integer>> actions = new ArrayList<>();
             workQueue.forEach(work -> {
                 work.setValue(work.getValue() - 1);
-                if (work.getValue() == 0)
-                    actions.add(work);
+                if (work.getValue() == 0) actions.add(work);
             });
             actions.forEach(e -> e.getKey().run());
             workQueue.removeAll(actions);
-
-
-            for (Player player : event.getServer().getPlayerList().getPlayers()) {
-                if (player.getMainHandItem().is(Items.GUHAO.get()) && player.hasEffect(Effect.GUHAO.get())) {
-                    SkyEyeRenderer.isOpen = true;
-                    break;
-                } else {
-                    SkyEyeRenderer.isOpen = false;
-                }
-            }
-
-        }
     }
-
 }

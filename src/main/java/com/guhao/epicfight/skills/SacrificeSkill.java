@@ -176,7 +176,7 @@ public class SacrificeSkill extends WeaponInnateSkill {
         Skill skill = executer.getSkill(this).getSkill();
         while (true) {
 //            executer.playSound(Sounds.CHUA.get(),0.75f,1.0f,1.0f);
-            if (executer.getTarget() != null && ((executer.getSkill(SkillSlots.WEAPON_INNATE).getStack() >= 12 && ((executer.getTarget().getHealth() <= executer.getTarget().getMaxHealth() * 0.1f) || (executer.getTarget().getHealth() <= 10.0f))) && !isOnGround)) {
+            if (executer.getTarget() != null && ((executer.getSkill(this).getStack() >= 12 && ((executer.getTarget().getHealth() <= executer.getTarget().getMaxHealth() * 0.1f) || (executer.getTarget().getHealth() <= 10.0f))) && !isOnGround)) {
                 executer.playSound(Sounds.SEKIRO.get(), 1f, 1f, 1f);
                 StaticAnimation agony_clawstrike = WOMAnimations.AGONY_CLAWSTRIKE.get();
                 if (agony_clawstrike instanceof BasicMultipleAttackAnimation zhenchujue) {
@@ -205,6 +205,7 @@ public class SacrificeSkill extends WeaponInnateSkill {
                                 if (!target.isAlive()) return;
                                 entitypatch.playSound(com.guhao.init.Sounds.CHARGE.get(), 1.2f, 1.1f, 1.1f);
                                 GuhaoMod.queueServerWork(40, () -> {
+                                    executer.getOriginal().serverLevel().sendParticles(ParticleType.ONE_JC_BLOOD_JUDGEMENT_LONG.get(), (target.getX()), (target.getEyeY()+5), (target.getZ()), 1, 0, 0,0,0);
                                     if (!target.isAlive()) return;
                                     Random random = new Random();
                                     double distance = 280;
@@ -241,14 +242,6 @@ public class SacrificeSkill extends WeaponInnateSkill {
                                                             ParticleType.GUHAO_LASER.get(),
                                                             startOffsetX, startOffsetY, startOffsetZ,
                                                             endOffsetX, endOffsetY, endOffsetZ
-                                                    )
-                                            );
-                                            GuhaoMod.NETWORK_CHANNEL.send(
-                                                    PacketDistributor.TRACKING_ENTITY.with(() -> target),
-                                                    new ParticlePacket(
-                                                            ParticleType.ONE_JC_BLOOD_JUDGEMENT_LONG.get(),
-                                                            startX, startY + 80, startZ,
-                                                            startX, startY - 80, startZ
                                                     )
                                             );
                                         }

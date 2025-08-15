@@ -24,9 +24,8 @@ public abstract class EnderPearlMixin extends ThrowableItemProjectile {
     protected void REonHit(HitResult p_37504_, CallbackInfo ci) {
         Entity entity1 = this.getOwner();
         super.onHit(p_37504_);
-//        entity.playSound(EpicFightSounds.ENDER_DRAGON_BREATH_FINALE, 0f, 0f);
         if (entity1 instanceof LivingEntity E && E.getMainHandItem().getItem() == Items.GUHAO.get()) {
-            for (int i = 0; i < 32; ++i) {
+            for (int i = 0; i < 66; ++i) {
                 this.level().addParticle(ParticleType.BLOOD_FIRE_FLAME.get(), this.getX(), this.getY() + this.random.nextDouble() * 2.0D, this.getZ(), this.random.nextGaussian(), 0.0D, this.random.nextGaussian());
             }
         }

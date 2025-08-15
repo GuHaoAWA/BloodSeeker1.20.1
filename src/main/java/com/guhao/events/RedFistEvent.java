@@ -21,7 +21,7 @@ public class RedFistEvent {
         if (!apartEntities.isEmpty()) {
             return;
         }
-        if (EpicFightCapabilities.getEntityPatch(owner, PlayerPatch.class).getTarget() != null && owner.getMainHandItem().getItem() == Items.GUHAO.get() && EpicFightCapabilities.getEntityPatch(owner, PlayerPatch.class).getEntityState().getLevel() == 2) {
+        if (EpicFightCapabilities.getEntityPatch(owner, PlayerPatch.class).getTarget() != null && owner.getMainHandItem().getItem() == Items.GUHAO.get() && (EpicFightCapabilities.getEntityPatch(owner, PlayerPatch.class).getEntityState().getLevel() == 2 || EpicFightCapabilities.getEntityPatch(owner, PlayerPatch.class).getEntityState().getLevel() == 3)) {
             Vec3 viewVec = EpicFightCapabilities.getEntityPatch(owner, PlayerPatch.class).getTarget().getViewVector(1.0F);
             Vec3 pos = new Vec3(EpicFightCapabilities.getEntityPatch(owner, PlayerPatch.class).getTarget().getX() - viewVec.x() * 1.25, EpicFightCapabilities.getEntityPatch(owner, PlayerPatch.class).getTarget().getEyeY() - 1.25, EpicFightCapabilities.getEntityPatch(owner, PlayerPatch.class).getTarget().getZ() - viewVec.z() * 1.25);
 
