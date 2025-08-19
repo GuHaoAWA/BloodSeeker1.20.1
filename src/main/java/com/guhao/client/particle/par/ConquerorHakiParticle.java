@@ -88,7 +88,7 @@ public class ConquerorHakiParticle extends TexturedCustomModelParticle {
         }
 
         public Particle createParticle(@NotNull SimpleParticleType typeIn, @NotNull ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
-            return new ConquerorHakiParticle(level, x, y, z, xSpeed, ySpeed, zSpeed, ESClientModels.CONQUEROR_HAKI, new ResourceLocation("guhao", "textures/models/particle/conqueror_haki.png"));
+            return new ConquerorHakiParticle(level, x, y, z, xSpeed, ySpeed, zSpeed, ESClientModels.CONQUEROR_HAKI, new ResourceLocation("guhao", "textures/models/particle/yamato_particle.png"));
         }
     }
 }

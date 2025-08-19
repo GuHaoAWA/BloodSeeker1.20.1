@@ -64,7 +64,7 @@ public class StayTrailParticle extends TextureSheetParticle {
         this.hasPhysics = false;
         this.trailInfo = trailInfo;
         Vec3 entityPos = (entitypatch.getOriginal()).position();
-        this.move(entityPos.x, entityPos.y + (double)(entitypatch.getOriginal()).getEyeHeight(), entityPos.z);
+        this.move(entityPos.x, entityPos.y + (entitypatch.getOriginal()).getEyeHeight(), entityPos.z);
         float size = (float)Math.max(this.trailInfo.start.length(), this.trailInfo.end.length()) * 2.0F;
         this.setSize(size, size);
         this.setSpriteFromAge(spriteSet);
@@ -246,7 +246,7 @@ public class StayTrailParticle extends TextureSheetParticle {
             Matrix4f matrix4f = poseStack.last().pose();
             int edges = this.visibleTrailEdges.size() - 1;
             boolean startFade = this.visibleTrailEdges.get(0).lifetime == 1;
-            boolean endFade = ((TrailParticle.TrailEdge)this.visibleTrailEdges.get(edges)).lifetime == this.trailInfo.trailLifetime;
+            boolean endFade = this.visibleTrailEdges.get(edges).lifetime == this.trailInfo.trailLifetime;
             float startEdge = (startFade ? (float)(this.trailInfo.interpolateCount * 2) * partialTick : 0.0F) + this.startEdgeCorrection;
             float endEdge = endFade ? Math.min((float)edges - (float)(this.trailInfo.interpolateCount * 2) * (1.0F - partialTick), (float)(edges - 1)) : (float)(edges - 1);
             float interval = 1.0F / (endEdge - startEdge);
@@ -264,8 +264,8 @@ public class StayTrailParticle extends TextureSheetParticle {
             float to = -partialStartEdge + interval;
 
             for(int i = (int)startEdge; i < (int)endEdge + 1; ++i) {
-                TrailParticle.TrailEdge e1 = (TrailParticle.TrailEdge)this.visibleTrailEdges.get(i);
-                TrailParticle.TrailEdge e2 = (TrailParticle.TrailEdge)this.visibleTrailEdges.get(i + 1);
+                TrailParticle.TrailEdge e1 = this.visibleTrailEdges.get(i);
+                TrailParticle.TrailEdge e2 = this.visibleTrailEdges.get(i + 1);
                 Vector4f pos1 = new Vector4f((float)e1.start.x, (float)e1.start.y, (float)e1.start.z, 1.0F);
                 Vector4f pos2 = new Vector4f((float)e1.end.x, (float)e1.end.y, (float)e1.end.z, 1.0F);
                 Vector4f pos3 = new Vector4f((float)e2.end.x, (float)e2.end.y, (float)e2.end.z, 1.0F);
@@ -276,10 +276,10 @@ public class StayTrailParticle extends TextureSheetParticle {
                 pos4.mul(matrix4f);
                 float alphaFrom = Mth.clamp(from, 0.0F, 1.0F);
                 float alphaTo = Mth.clamp(to, 0.0F, 1.0F);
-                vertexConsumer.vertex((double)pos1.x(), (double)pos1.y(), (double)pos1.z()).uv(from, 1.0F).color(this.rCol, this.gCol, this.bCol, this.alpha * alphaFrom * fading).uv2(light).endVertex();
-                vertexConsumer.vertex((double)pos2.x(), (double)pos2.y(), (double)pos2.z()).uv(from, 0.0F).color(this.rCol, this.gCol, this.bCol, this.alpha * alphaFrom * fading).uv2(light).endVertex();
-                vertexConsumer.vertex((double)pos3.x(), (double)pos3.y(), (double)pos3.z()).uv(to, 0.0F).color(this.rCol, this.gCol, this.bCol, this.alpha * alphaTo * fading).uv2(light).endVertex();
-                vertexConsumer.vertex((double)pos4.x(), (double)pos4.y(), (double)pos4.z()).uv(to, 1.0F).color(this.rCol, this.gCol, this.bCol, this.alpha * alphaTo * fading).uv2(light).endVertex();
+                vertexConsumer.vertex(pos1.x(), pos1.y(), pos1.z()).uv(from, 1.0F).color(this.rCol, this.gCol, this.bCol, this.alpha * alphaFrom * fading).uv2(light).endVertex();
+                vertexConsumer.vertex(pos2.x(), pos2.y(), pos2.z()).uv(from, 0.0F).color(this.rCol, this.gCol, this.bCol, this.alpha * alphaFrom * fading).uv2(light).endVertex();
+                vertexConsumer.vertex(pos3.x(), pos3.y(), pos3.z()).uv(to, 0.0F).color(this.rCol, this.gCol, this.bCol, this.alpha * alphaTo * fading).uv2(light).endVertex();
+                vertexConsumer.vertex(pos4.x(), pos4.y(), pos4.z()).uv(to, 1.0F).color(this.rCol, this.gCol, this.bCol, this.alpha * alphaTo * fading).uv2(light).endVertex();
                 from += interval;
                 to += interval;
             }
